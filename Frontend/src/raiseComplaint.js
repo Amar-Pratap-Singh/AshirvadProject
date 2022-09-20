@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import CircularJSON from 'circular-json';
 
-function RaiseComplaint(){
+function RaiseComplaint(props){
 
     function triggerRaiseComplaint(){
         const form = document.getElementById("complaint-form");
@@ -34,6 +34,7 @@ function RaiseComplaint(){
 
     return (
         <div>
+            <h1>Raise a Complaint</h1>
             <form id="complaint-form">
                 <div class="form-group">
                     <label for="CustomerUsername">Username</label>

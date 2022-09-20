@@ -4,7 +4,7 @@ import CircularJSON from 'circular-json';
 import RaiseComplaint from './raiseComplaint';
 
 
-function SignIn(){
+function SignIn(props){
     
     function triggerSignIn(){
         const form = document.getElementById("login-form");
@@ -14,10 +14,6 @@ function SignIn(){
             event.preventDefault();
 
             const username = document.getElementById("CustomerUsername").value;
-            const FirstName = document.getElementById("CustomerFirstName").value;
-            const LastName = document.getElementById("CustomerLastName").value;
-            const Email = document.getElementById("CustomerEmail").value;
-            const Contact = document.getElementById("CustomerContact").value;
             const Password = document.getElementById("CustomerPassword").value;
 
             const result = await fetch("http://localhost:8080/SignIn", {
@@ -27,15 +23,14 @@ function SignIn(){
                 },
                 body: JSON.stringify({
                     username,
-                    FirstName,
-                    LastName,
-                    Email,
-                    Contact,
                     Password
                 }),    
             }).then((res) => res.json());
 
             console.log(result.status);
+            if(result.status === "ok") {
+                props.navigator('dashboard', false);
+            }
 
         }
     }
@@ -43,6 +38,7 @@ function SignIn(){
 
     return (
         <div>
+            <h1>Login</h1>
             <form id="login-form">
                 <div class="form-group">
                     <label for="CustomerUsername">Username</label>
@@ -50,36 +46,9 @@ function SignIn(){
                         <input type="text" class="form-control" id="CustomerUsername" placeholder="Username" />
                     </div>
                 </div>
+               
                 <div class="form-group">
-                    <label for="CustomerFirstName">First Name</label>
-                    <div class="col-3"> 
-                        <input type="text" class="form-control" id="CustomerFirstName"   placeholder="First Name" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="CustomerLastName">Last Name</label>
-                    <div class="col-3">
-                        <input type="text" class="form-control" id="CustomerLastName"  placeholder="Last Name" />
-                    </div>
-                
-                </div>
-                <div class="form-group">
-                    <label for="CustomerEmail">Email address</label>
-                    <div class="col-3">
-                        <input type="email" class="form-control" id="CustomerEmail"  placeholder="Email" />
-                    </div>                
-                </div>
-
-                <div class="form-group">
-                    <label for="CustomerContact">Contact</label>
-                    <div class="col-3">
-                        <input type="number" class="form-control" id="CustomerContact"  placeholder="Contact" />
-                    </div>
-                </div>
-
-
-                <div class="form-group">
-                    <label for="CustomerPassword">Enter your password</label>
+                    <label for="CustomerPassword">Password</label>
                     <div class="col-3">
                         <input type="password" class="form-control rounded-0" id="CustomerPassword" />
                     </div>
