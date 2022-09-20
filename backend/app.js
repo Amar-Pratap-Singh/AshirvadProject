@@ -1,20 +1,12 @@
 const express = require("express");
-const app = express();
 const bodyParser = require("body-parser");
+const ejs = require("ejs");
+const mongoose = require("mongoose");
 const cors = require("cors");
 const http = require("http");
-const path = require('path');
-const admin = require("firebase-admin");
-const credentials = require("./DataBase/key.json");
+const path = require('path')
 
-
-admin.initializeApp({
-    credential: admin.credential.cert(credentials),
-    databaseURL: "https://ashirvad-2.firebaseio.com" 
-});
-
-app.use(express.json());
-app.use(express.urlencoded({extended : true}));
+const app = express();
 
 app.set('view engine', 'ejs');
 
@@ -22,16 +14,31 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json())
 app.set('/src', path.join(__dirname, '/src'))
 
+// creating a test Database
+mongoose.connect('mongodb://localhost:27017/testDB', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error'));
+db.once('open', function() {
+    console.log("DB Connected!");
+});
 
 app.use(cors());
 
+// Schema of the database
+const testdbSchema = mongoose.Schema({
+    username: String
+});
+
+const Users = mongoose.model("User", testdbSchema);
 
 app.use(
     cors({
         origin: "*",
     })
 );
-
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -41,77 +48,28 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.post('/api/buttonClick', async(req, res) => {
+    const { username } = req.body;
+    console.log(username)
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+  
+    let checkUser = await testDB.Users.find({'params.value':username});
+    if(!checkUser)
+      res.json({ status: "error" });
+    else if(checkUser.exists)
+      res.json({ status: "ok" });
+    else
+      res.json({ status: "NotExists" });
+    
+  });
 
-// Server as a separate module
-app.get('/', async(req, res)=>{
-    res.send("You are testing Server Side");
+
+
+
+
+app.listen(3600, function(req, res){
+    console.log("Server is listening on port 3600");
 });
-
-
-const db = admin.firestore();
-
-
-app.post('/RaiseComplaint', async (req, res) =>{
-    res.header("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
-        const id = req.body.username;
-        const userJson = {
-            username: req.body.username,
-            contact: req.body.Contact,
-            complaint: req.body.Complaint,
-        };
-        
-        const response = await db.collection("Complaints").doc(id).set(userJson);
-        if(response) {
-            res.json({ status: "ok" }) 
-        }
-        else {
-            res.json({ status: "error" })
-        }
-    }catch(error){
-      res.send({status: error});
-    }
-})
-
-
-
-app.post('/SignIn', async (req, res) =>{
-    res.header("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
-        const id = req.body.username;
-        const userJson = {
-            firstName: req.body.FirstName,
-            lastName: req.body.LastName,
-            username: req.body.username,
-            email: req.body.Email,
-            contact: req.body.Contact,
-            password: req.body.Password
-        };
-        
-        const response = await db.collection("RegisteredUsers").doc(id).set(userJson);
-        if(response) {
-            res.json({ status: "ok" }) 
-        }
-        else {
-            res.json({ status: "error" })
-        }
-
-    }
-    catch(error){
-        res.send({status: error});
-        return;
-    }
-})
-
-
-const PORT = process.env.PORT || 8080;
-
-app.listen(PORT,() => {
-    console.log(`server is running on port ${PORT}.`);
-})
