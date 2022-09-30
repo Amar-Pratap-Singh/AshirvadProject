@@ -38,7 +38,7 @@ function SignUp(props){
             console.log(result.status);
 
             if(result.status === "ok") {
-                props.navigator('dashboard', false);
+                props.navigator('login-page', false);
             }
 
         }
@@ -82,13 +82,21 @@ function SignUp(props){
                     </div>
                 </div>
 
-
                 <div class="form-group">
                     <label for="CustomerPassword">Enter your password</label>
                     <div class="col-3">
                         <input type="password" class="form-control rounded-0" id="CustomerPassword" />
                     </div>
                 </div>
+                
+                {/* sign up as
+                <div class="form-group">
+                    <label for="ClientCategory">SignUp As</label>
+                    <div class="col-3">
+
+                    </div>
+                </div> */}
+
              
                 <button onClick={triggerSignUp} name="SignUpButton" type="submit" class="btn btn-primary">Sign Up</button>
             </form>

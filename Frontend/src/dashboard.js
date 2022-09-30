@@ -21,7 +21,7 @@ function Dashboard(props){
 
 
     return (
-        <div>
+        <div class="center_div">
             <h1>DashBoard</h1>
             <form id="dashboard">
                 <button onClick={directRaiseComplaint} name="DirectRaiseComplaint" type="submit" class="btn btn-primary">Raise Complaint</button>

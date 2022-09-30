@@ -5,6 +5,9 @@ import RaiseComplaint from './raiseComplaint';
 
 
 function SignIn(props){
+
+    sessionStorage.setItem('UserName', this.state.details.username);
+
     
     function triggerSignIn(){
         const form = document.getElementById("login-form");
