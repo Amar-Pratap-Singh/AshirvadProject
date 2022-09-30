@@ -1,0 +1,15 @@
+.center_div{
+    width: 50%;
+    margin: 10% 25%;
+    padding: 10% 10%;
+    border-style: solid;
+    border-radius: 2%;
+    
+    /* justify-content: center; */
+}
+
+.center_div h1{
+    background-color: black;
+    color: white;
+    width: 100%;
+}
