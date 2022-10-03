@@ -92,6 +92,7 @@ app.post('/SignIn', async (req, res) =>{
 
         // get document
         const user = await db.collection('Registered'+role).doc(id).get();
+        const registeredUsers = await db.collection('RegisteredUsers').doc(id).get();
         let response = 0;
 
         if (!user.exists) {
@@ -110,7 +111,7 @@ app.post('/SignIn', async (req, res) =>{
 
         if(response) {
             // res.json({userData: user.data()});
-            res.json({ status: "ok", userData: user.data()}) 
+            res.json({ status: "ok", userData: registeredUsers.data()}) 
         }
         else {
             res.json({ status: "error" })
