@@ -1,0 +1,46 @@
+body{
+    background-color: #EFFFFD;
+}
+
+form{
+    padding-left: 20px;
+    padding-bottom: 10px;
+}
+
+.center_div{
+    background-color: white;
+    width: 50%;
+    margin: 10% 25%;
+    border-radius: 2%;
+        
+    /* justify-content: center; */
+}
+
+.center_div h1{
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #004262;
+    color: white;
+    width: 100%;
+}
+
+#home-screen-page{
+    /* display: grid; */
+    /* width: 20%; */
+    padding: 10px 10px;
+}
+
+.home-page-btn{
+    margin-left: 5px;
+    /* margin-bottom: 10px; */
+} 
+
+
+.profile-pic {
+    margin-right: 10px;
+    border-radius: 100%;
+}
+
+.drop-down-menu{
+    display: inline;
+}
