@@ -21,6 +21,7 @@ function HomeScreenPage(props){
                 // body: JSON.stringify({
                 // }),    
             }).then((res) => res.json());
+            
 
             props.navigator('sign-up-page', false);
         }
@@ -48,11 +49,11 @@ function HomeScreenPage(props){
 
 
     return (
-        <div>
+        <div class="center_div">
             <h1>Home Screen</h1>
             <form id="home-screen-page">
-                <button onClick={goToSignUpPage} name="DirectSignUpPage" type="submit" class="btn btn-primary">Sign Up</button>
-                <button onClick={goToLoginPage} name="DirectLoginPage" type="submit" class="btn btn-primary">Login</button>
+                <button onClick={goToSignUpPage} name="DirectSignUpPage" type="submit" class="home-page-btn btn btn-primary">Sign Up</button>
+                <button onClick={goToLoginPage} name="DirectLoginPage" type="submit" class="home-page-btn btn btn-primary">Login</button>
             </form>
         </div>
     );
