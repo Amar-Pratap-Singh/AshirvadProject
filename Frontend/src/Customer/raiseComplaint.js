@@ -26,7 +26,8 @@ function RaiseComplaint(props){
                 }),    
             }).then((res) => res.json());
 
-            console.log(result.status)
+            console.log("Complaint Raised Success: ", result.status);
+            props.navigator('customer-dashboard', false);
         }
     }
 

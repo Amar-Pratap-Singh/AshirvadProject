@@ -45,16 +45,19 @@ function SignIn(props){
 
             if(result.status === "ok") {
                 props.setUserDetails(result.userData.username, result.userData.contact, result.userData.firstName, result.userData.lastName, result.userData.email);
-                
+
                 switch (role){
                     case "Customer":
                         props.navigator('customer-dashboard', false);
+                        break;
 
                     case "Plumber":
                         props.navigator('plumber-dashboard', false);
+                        break;
 
                     case "Manager":
                         props.navigator('manager-dashboard', false);
+                        break;
 
                     default:
                         console.log("Invalid User Type!!");

@@ -7,6 +7,7 @@ import CustomerDashboard from './Customer/dashboard';
 import PlumberDashboard from './Plumber/dashboard';
 import ManagerDashboard from './Manager/dashboard';
 import HomeScreenPage from './homeScreen';
+import ViewComplaintHistory from './Customer/complaintHistory';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -18,6 +19,8 @@ function App(props) {
   const [userFirstName, setUserFirstName] = useState("");
   const [userLastName, setUserLastName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  // const [userComplaintsHistoryIDs, setUserComplaintsHistoryIDs] = useState([]);
+  const [userComplaintsHistory, setUserComplaintsHistory] = useState([]); 
 
   function setUserDetails(username, contact, firstName, lastName, email){
     setUserName(username);
@@ -26,6 +29,20 @@ function App(props) {
     setUserLastName(lastName);
     setUserEmail(email);
   }
+
+  function setComplaintsHistory(complaintsArray){
+    setUserComplaintsHistory(complaintsArray);
+  }
+
+  // ************** Not needed *****************
+  // function setComplaintHistoryIDs(complaintID){
+  //   // console.log("Before: ", userComplaintsHistoryIDs);
+  //   setUserComplaintsHistoryIDs(...userComplaintsHistoryIDs, complaintID);
+  //   // console.log("After: ", userComplaintsHistoryIDs);
+  // }
+  // ************** Not needed *****************
+
+
 
   function logOut(){
     setUserName("");
@@ -47,8 +64,12 @@ function App(props) {
       <Route exact path="sign-up-page" element={<SignUp setUserDetails={setUserDetails} navigator={navigator}/>}></Route>
       <Route exact path="login-page" element={<SignIn setUserDetails={setUserDetails} navigator={navigator}/>}></Route>
       <Route exact path="register-new-role" element={<RegisterNewRole setUserDetails={setUserDetails} navigator={navigator}/>}></Route>
-      <Route exact path="customer-dashboard" element={<CustomerDashboard logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="customer-dashboard" element={<CustomerDashboard logOut={logOut} setComplaintsHistory={setComplaintsHistory}  userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      
+      {/* After a complaint is raised, complaintHistory should update, for that passing {setComplaintHistory} */}
       <Route exact path="raise-complaint" element={<RaiseComplaint logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      
+      <Route exact path="view-complaint-history" element={<ViewComplaintHistory logOut={logOut} userComplaintsHistory={userComplaintsHistory} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
       
       <Route exact path="plumber-dashboard" element={<PlumberDashboard logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
       <Route exact path="manager-dashboard" element={<ManagerDashboard logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
