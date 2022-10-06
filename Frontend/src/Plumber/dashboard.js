@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Navbar from '../Navbar';
 
 function PlumberDashboard(props){
 
@@ -14,39 +14,33 @@ function PlumberDashboard(props){
 
             // Idea is that plumber will login as plumber. He won't have access to individuals' complaints. What we can do, is we will go to back end and fetch all the users' complaints
 
-            const result = await fetch("http://localhost:8080/PlumberViewComplaints", {
+            const username = props.userDetails.userName;
+
+            const result = await fetch("http://localhost:8080/MyComplaints", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                }
+                },
+                body: JSON.stringify({
+                    username
+                })
             }).then((res) => res.json());
-
             
+            props.setAssignedComplaints(result.customerUsernames, result.assignedComplaintIDs, result.assignedComplaints);
+            console.log(props.customers);
+            props.navigator('my-complaints', false);
         }
         
     }
 
     return (
         <div>
-            <nav class="navbar navbar-dark bg-dark">
-                <a class="navbar-brand" href="#">
-                    <img src="https://www.kindpng.com/picc/m/298-2987120_plumbing-white-icon-png-clipart-png-download-sign.png" width="30" height="30" class="profile-pic d-inline-block align-top profile-pic" alt=""></img>
-                    Ashirvad
-                </a>   
-
-                <span>
-                    <a class="navbar-brand" href="#">
-                        <img src="https://freesvg.org/img/abstract-user-flat-4.png" width="30" height="30" class="d-inline-block align-top profile-pic" alt=""></img>
-                        { props.userDetails.userName }
-                    </a> 
-                    <button class="btn btn-primary" onClick={props.logOut} type="submit">Log out</button>
-                </span> 
-            </nav>
-
+            <Navbar props={props}/>
+            
             <div class="center_div">
                 <h1>Dashboard</h1>
                 <form id="dashboard">
-                    <button onClick={directViewComplaint} name="DirectViewComplaint" type="submit" class="submit-btn btn btn-primary">View Assigned Complaint</button>
+                    <button onClick={directViewComplaint} name="DirectViewComplaint" type="submit" class="submit-btn btn btn-primary">My Complaints</button>
                 </form>
             </div>
         </div>

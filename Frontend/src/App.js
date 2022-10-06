@@ -8,6 +8,7 @@ import PlumberDashboard from './Plumber/dashboard';
 import ManagerDashboard from './Manager/dashboard';
 import HomeScreenPage from './homeScreen';
 import ViewComplaintHistory from './Customer/complaintHistory';
+import MyComplaints from './Plumber/myComplaints';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -21,6 +22,9 @@ function App(props) {
   const [userEmail, setUserEmail] = useState("");
   // const [userComplaintsHistoryIDs, setUserComplaintsHistoryIDs] = useState([]);
   const [userComplaintsHistory, setUserComplaintsHistory] = useState([]); 
+  const [plumberAssignedComplaints, setPlumberAssignedComplaints] = useState([]);
+  const [plumberAssignedComplaintIDs, setPlumberAssignedComplaintsIDs] = useState([]);
+  const [customerUsername ,setCustomerUsername] = useState([]);
 
   function setUserDetails(username, contact, firstName, lastName, email){
     setUserName(username);
@@ -32,6 +36,12 @@ function App(props) {
 
   function setComplaintsHistory(complaintsArray){
     setUserComplaintsHistory(complaintsArray);
+  }
+
+  function setAssignedComplaints(customerUsername, assignedComplaintIDs, assignedComplaints){
+    setPlumberAssignedComplaintsIDs(assignedComplaintIDs);
+    setCustomerUsername(customerUsername);
+    setPlumberAssignedComplaints(assignedComplaints);
   }
 
   // ************** Not needed *****************
@@ -68,10 +78,15 @@ function App(props) {
       
       {/* After a complaint is raised, complaintHistory should update, for that passing {setComplaintHistory} */}
       <Route exact path="raise-complaint" element={<RaiseComplaint logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      
       <Route exact path="view-complaint-history" element={<ViewComplaintHistory logOut={logOut} userComplaintsHistory={userComplaintsHistory} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+
+
+      {/* Plumber */}
+      <Route exact path="plumber-dashboard" element={<PlumberDashboard logOut={logOut} customers={customerUsername} setAssignedComplaints={setAssignedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="my-complaints" element={<MyComplaints logOut={logOut} customers={customerUsername} assignedComplaintIDs={plumberAssignedComplaintIDs} assignedComplaints={plumberAssignedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
       
-      <Route exact path="plumber-dashboard" element={<PlumberDashboard logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      
+      {/* Manager */}
       <Route exact path="manager-dashboard" element={<ManagerDashboard logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
     </Routes>
     </>
