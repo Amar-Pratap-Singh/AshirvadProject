@@ -27,7 +27,7 @@ function PlumberDashboard(props){
             }).then((res) => res.json());
             
             props.setAssignedComplaints(result.customerUsernames, result.assignedComplaintIDs, result.assignedComplaints);
-            console.log(props.customers);
+            console.log("Customers: ", props.customers);
             props.navigator('my-complaints', false);
         }
         

@@ -3,7 +3,10 @@ import React from 'react';
 function ComplaintCard(props){
 
     function eventHandler(){
-        alert(props.complaintID);
+        alert("Accepted Complaint with Complaint ID: " + props.complaintID);
+        
+        const updatedComplaints = props.complaints.filter((_, i) => i !== props.index);
+        props.setComplaints(updatedComplaints);
     }
 
     return(
