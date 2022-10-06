@@ -290,6 +290,39 @@ app.post('/ViewComplaintHistory', async(req, res)=>{
 })
 
 
+// ################################################################## 
+app.post('/MyComplaints', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+        const username = req.body.username;
+
+        const registeredPlumber = await db.collection("RegisteredPlumber").doc(username).get();
+        const assignedComplaintIDs = registeredPlumber.data().complaints;
+        
+        const assignedComplaints = [];
+        const customers = [];
+        var complaintRecord;
+        
+        // console.log("Button is clicked")
+
+        for (const ids of assignedComplaintIDs.values()){
+            complaintRecord = await db.collection('Complaints').doc(ids).get();
+            assignedComplaints.push(complaintRecord.data().complaint);
+            customers.push(complaintRecord.data().username);
+        }
+
+        res.json({status: "ok", customerUsernames: customers, assignedComplaintIDs: assignedComplaintIDs, assignedComplaints: assignedComplaints});
+
+    }catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
+
 
 const PORT = process.env.PORT || 8080;
 
