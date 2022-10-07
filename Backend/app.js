@@ -69,7 +69,21 @@ app.post('/SignUp', async (req, res) =>{
             role: req.body.Role,
         };
 
-        const userCredsJson = {
+        const customerCredsJson = {
+            username: req.body.username,
+            password: req.body.Password,
+            contact: req.body.Contact,
+            complaints: []
+        };
+
+        const plumberCredsJson = {
+            username: req.body.username,
+            password: req.body.Password,
+            complaints: [],
+            acceptedComplaints: []
+        };
+
+        const managerCredsJson = {
             username: req.body.username,
             password: req.body.Password,
             complaints: []
@@ -87,9 +101,24 @@ app.post('/SignUp', async (req, res) =>{
             
             for (let roleIndex = 0; roleIndex < 3 ; roleIndex++){
                 if (userJson.role[roleIndex] !== ""){
-                    response = await db.collection("Registered"+userJson.role[roleIndex]).doc(id).set(userCredsJson);
-                    if (!response)
-                        verify = 0;
+
+                    if (userJson.role[roleIndex] === "Customer"){
+                        response = await db.collection("RegisteredCustomer").doc(id).set(customerCredsJson);
+                        if (!response)
+                            verify = 0;
+                    }
+
+                    else if (userJson.role[roleIndex] === "Plumber"){
+                        response = await db.collection("RegisteredPlumber").doc(id).set(plumberCredsJson);
+                        if (!response)
+                            verify = 0;
+                    }
+
+                    else if (userJson.role[roleIndex] === "Manager"){
+                        response = await db.collection("RegisteredManager").doc(id).set(managerCredsJson);
+                        if (!response)
+                            verify = 0;
+                    }
                 }
             }
     
@@ -164,31 +193,66 @@ app.post('/RegisterNewRole', async (req, res) =>{
         const password = req.body.Password;
         const role = req.body.Role;
 
-        const userCredsJson = {
-            username: req.body.username,
-            password: req.body.Password
-        };
-
+        
         const user = await db.collection('RegisteredUsers').doc(id).get();
         let verify = 1;
         let userRoles = user.data().role;
+
 
         if (!user.exists) {
             console.log('User Not Registered!');
         } 
         
         else {
+       
+            const customerCredsJson = {
+                username: req.body.username,
+                password: req.body.Password,
+                contact: user.data().contact,
+                complaints: []
+            };
+    
+            const plumberCredsJson = {
+                username: req.body.username,
+                password: req.body.Password,
+                complaints: [],
+                acceptedComplaints: []
+            };
+    
+            const managerCredsJson = {
+                username: req.body.username,
+                password: req.body.Password,
+                complaints: []
+            };
+
+            let response = 1;
             userDataJson = user.data();
             if (userDataJson.password === password){
-                // console.log("success!");
+                console.log("Password success!");
 
                 for (let roleIndex = 0; roleIndex < 3 ; roleIndex++){
                     if (role[roleIndex] !== ""){
                         userRoles[roleIndex] = role[roleIndex];
-                        response = await db.collection("Registered"+role[roleIndex]).doc(id).set(userCredsJson);
-                        if (!response)
-                            verify = 0;
+                        
+                        if (role[roleIndex] === "Customer"){
+                            response = await db.collection("RegisteredCustomer").doc(id).set(customerCredsJson);
+                            if (!response)
+                                verify = 0;
+                        }
+                        
+                        else if (role[roleIndex] === "Plumber"){
+                            response = await db.collection("RegisteredPlumber").doc(id).set(plumberCredsJson);
+                            if (!response)
+                                verify = 0;
+                        }
+    
+                        else if (role[roleIndex] === "Manager"){
+                            response = await db.collection("RegisteredManager").doc(id).set(managerCredsJson);
+                            if (!response)
+                                verify = 0;
+                        }
                     }
+                
                 }
             }
             else{
@@ -290,14 +354,80 @@ app.post('/ViewComplaintHistory', async(req, res)=>{
 })
 
 
+// ################################################################## 
+app.post('/MyComplaints', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+        const username = req.body.username;
+
+        const registeredPlumber = await db.collection("RegisteredPlumber").doc(username).get();
+        const assignedComplaintIDs = registeredPlumber.data().complaints;
+        
+        const assignedComplaints = [];
+        const customers = [];
+        var complaintRecord;
+        
+        // console.log("Button is clicked")
+
+        for (const ids of assignedComplaintIDs.values()){
+            complaintRecord = await db.collection('Complaints').doc(ids).get();
+            assignedComplaints.push(complaintRecord.data().complaint);
+            customers.push(complaintRecord.data().username);
+        }
+
+        res.json({status: "ok", customerUsernames: customers, assignedComplaintIDs: assignedComplaintIDs, assignedComplaints: assignedComplaints});
+
+    }catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
+
+app.post('/AcceptComplaint', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+        const complaintID = req.body.complaintID;
+        const plumberUsername = req.body.plumberUsername;
+        const updatedComplaintIDs = req.body.updatedComplaintIDs;
+        
+        // console.log("updatedCOmplaintIDs: ", updatedComplaintIDs);
+
+        const plumberData = await db.collection('RegisteredPlumber').doc(plumberUsername).get();
+        
+        let acceptedComplaints = plumberData.data().acceptedComplaints; 
+        acceptedComplaints.push(complaintID);
+        
+        console.log("acceptedCOmplaints: ", acceptedComplaints);
+        console.log("updatedComplaints: ", updatedComplaintIDs);
+
+        const response = await db.collection('RegisteredPlumber').doc(plumberUsername).set({
+            acceptedComplaints: acceptedComplaints,
+            complaints: updatedComplaintIDs
+        }, { merge: true });
+
+        if(response) {
+            res.json({ status: "ok"}) 
+        }
+        else {
+            res.json({ status: "error" })
+        }
+
+    }catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
 
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT,() => {
     console.log(`server is running on port ${PORT}.`);
 })
-
-
-
-// get collection
-// const usersDetails = await db.collection('RegisteredUsers').get();
