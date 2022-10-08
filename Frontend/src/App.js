@@ -9,6 +9,7 @@ import ManagerDashboard from './Manager/dashboard';
 import HomeScreenPage from './homeScreen';
 import ViewComplaintHistory from './Customer/complaintHistory';
 import MyComplaints from './Plumber/myComplaints';
+import AcceptedComplaints from './Plumber/acceptedComplaints';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -24,6 +25,10 @@ function App(props) {
   const [userComplaintsHistory, setUserComplaintsHistory] = useState([]); 
   const [plumberAssignedComplaints, setPlumberAssignedComplaints] = useState([]);
   const [plumberAssignedComplaintIDs, setPlumberAssignedComplaintsIDs] = useState([]);
+  
+  const [plumberAcceptedComplaints, setPlumberAcceptedComplaints] = useState([]);
+  const [plumberAccepteddComplaintIDs, setPlumberAcceptedComplaintsIDs] = useState([]);
+
   const [customerUsername ,setCustomerUsername] = useState([]);
 
   function setUserDetails(username, contact, firstName, lastName, email){
@@ -42,6 +47,12 @@ function App(props) {
     setPlumberAssignedComplaintsIDs(assignedComplaintIDs);
     setCustomerUsername(customerUsername);
     setPlumberAssignedComplaints(assignedComplaints);
+  }
+
+  function setAcceptedComplaints(acceptedComplaints, acceptedComplaintIDs, customerUsername){
+    setPlumberAcceptedComplaints(acceptedComplaints);
+    setPlumberAcceptedComplaintsIDs(acceptedComplaintIDs);
+    setCustomerUsername(customerUsername);
   }
 
   // ************** Not needed *****************
@@ -74,16 +85,17 @@ function App(props) {
       <Route exact path="sign-up-page" element={<SignUp setUserDetails={setUserDetails} navigator={navigator}/>}></Route>
       <Route exact path="login-page" element={<SignIn setUserDetails={setUserDetails} navigator={navigator}/>}></Route>
       <Route exact path="register-new-role" element={<RegisterNewRole setUserDetails={setUserDetails} navigator={navigator}/>}></Route>
+
+     {/* Customer */}
       <Route exact path="customer-dashboard" element={<CustomerDashboard logOut={logOut} setComplaintsHistory={setComplaintsHistory}  userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      
-      {/* After a complaint is raised, complaintHistory should update, for that passing {setComplaintHistory} */}
       <Route exact path="raise-complaint" element={<RaiseComplaint logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
       <Route exact path="view-complaint-history" element={<ViewComplaintHistory logOut={logOut} userComplaintsHistory={userComplaintsHistory} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
 
 
       {/* Plumber */}
-      <Route exact path="plumber-dashboard" element={<PlumberDashboard logOut={logOut} customers={customerUsername} setAssignedComplaints={setAssignedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="plumber-dashboard" element={<PlumberDashboard logOut={logOut} customers={customerUsername} setAcceptedComplaints={setAcceptedComplaints} setAssignedComplaints={setAssignedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
       <Route exact path="my-complaints" element={<MyComplaints logOut={logOut} customers={customerUsername} assignedComplaintIDs={plumberAssignedComplaintIDs} assignedComplaints={plumberAssignedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="view-accepted-complaints" element={<AcceptedComplaints logOut={logOut} customers={customerUsername} acceptedComplaintIDs={plumberAccepteddComplaintIDs} acceptedComplaints={plumberAcceptedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
       
       
       {/* Manager */}

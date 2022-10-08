@@ -7,8 +7,6 @@ function ComplaintCard(props){
         
         const updatedComplaints = props.complaints.filter((_, i) => i !== props.index);
         const updatedComplaintIDs = props.complaintIDs.filter((_, i) => i !== props.index);
-
-        
         
         const complaintID = props.complaintID;
         const plumberUsername = props.plumberUsername;
