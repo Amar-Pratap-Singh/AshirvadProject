@@ -294,6 +294,7 @@ app.post('/RaiseComplaint', async (req, res) =>{
             username: req.body.username,
             contact: req.body.Contact,
             complaint: req.body.Complaint,
+            status: "raised"
         };
         
         const response1 = db.collection("Complaints").doc(id).set(userJson);
@@ -368,6 +369,7 @@ app.post('/MyComplaints', async(req, res)=>{
         
         const assignedComplaints = [];
         const customers = [];
+        // const complaintsStatus = [];
         var complaintRecord;
         
         // console.log("Button is clicked")
@@ -376,6 +378,7 @@ app.post('/MyComplaints', async(req, res)=>{
             complaintRecord = await db.collection('Complaints').doc(ids).get();
             assignedComplaints.push(complaintRecord.data().complaint);
             customers.push(complaintRecord.data().username);
+            // complaintsStatus.push(complaintRecord.data().status);
         }
 
         res.json({status: "ok", customerUsernames: customers, assignedComplaintIDs: assignedComplaintIDs, assignedComplaints: assignedComplaints});
@@ -397,7 +400,16 @@ app.post('/AcceptComplaint', async(req, res)=>{
         const plumberUsername = req.body.plumberUsername;
         const updatedComplaintIDs = req.body.updatedComplaintIDs;
         
-        // console.log("updatedCOmplaintIDs: ", updatedComplaintIDs);
+        // Update the status of the complaint
+        const complaintData = await db.collection("Complaints").doc(complaintID).get();
+        let response1 = 0;
+
+        if (complaintData.data().status === "raised"){
+            response1 = await db.collection("Complaints").doc(complaintID).set({
+                status: "accepted"
+            }, {merge: true});
+        }
+
 
         const plumberData = await db.collection('RegisteredPlumber').doc(plumberUsername).get();
         
@@ -407,12 +419,12 @@ app.post('/AcceptComplaint', async(req, res)=>{
         console.log("acceptedCOmplaints: ", acceptedComplaints);
         console.log("updatedComplaints: ", updatedComplaintIDs);
 
-        const response = await db.collection('RegisteredPlumber').doc(plumberUsername).set({
+        const response2 = await db.collection('RegisteredPlumber').doc(plumberUsername).set({
             acceptedComplaints: acceptedComplaints,
             complaints: updatedComplaintIDs
         }, { merge: true });
 
-        if(response) {
+        if(response1 && response2) {
             res.json({ status: "ok"}) 
         }
         else {
@@ -443,16 +455,18 @@ app.post('/ViewAcceptedComplaints', async(req, res)=>{
         
         const acceptedComplaintArray = [];
         const customers = [];
+        const complaintsStatus = [];
         var complaintRecord;
         
         for (const ids of acceptedComplaintIDs.values()){
             complaintRecord = await db.collection('Complaints').doc(ids).get();
             acceptedComplaintArray.push(complaintRecord.data().complaint);
             customers.push(complaintRecord.data().username);
+            complaintsStatus.push(complaintRecord.data().status);
         }
         
         console.log("Accepted Complaint: ", acceptedComplaintArray);
-        res.json({status: "ok", acceptedComplaintIDs: acceptedComplaintIDs, acceptedComplaintArray: acceptedComplaintArray, customerUsernames: customers});
+        res.json({status: "ok", complaintsStatus: complaintsStatus, acceptedComplaintIDs: acceptedComplaintIDs, acceptedComplaintArray: acceptedComplaintArray, customerUsernames: customers});
         
 
     }catch(error){
@@ -460,6 +474,75 @@ app.post('/ViewAcceptedComplaints', async(req, res)=>{
         return;
     }
 })
+
+
+
+
+app.post('/NextPage', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+
+        const complaintID = req.body.complaintID;
+        const currentStatus = req.body.currentStatus;
+        const plumberUsername = req.body.plumberUsername;
+        const temp = req.body.temp;
+
+        const complaintData = await db.collection("Complaints").doc(complaintID).get();
+        const complaintStatus = complaintData.data().status;
+
+        let response1 = 0;
+        let newStatus = "";
+        
+        // console.log("NEW STATUS: ", newStatus);
+        if (currentStatus === complaintStatus){
+            console.log("Status are matched! " + currentStatus);
+            
+            if (currentStatus === "accepted")
+                newStatus = "visited";
+                
+            else if (currentStatus === "visited")
+                newStatus = "tobeExecuted";
+
+            else if (currentStatus === "tobeExecuted" && temp === "")
+                newStatus = "paused";
+
+            else if (currentStatus === "paused")
+                newStatus = "tobeExecuted";
+
+            else if (currentStatus === "tobeExecuted" && temp === "submit")
+                newStatus = "executed";
+        
+            response1 = await db.collection("Complaints").doc(complaintID).set({
+                status: newStatus
+            }, {merge: true});
+        }
+        
+        let complaintRecord;
+        const plumberData = await db.collection("RegisteredPlumber").doc(plumberUsername).get();
+        let acceptedComplaintIDs = plumberData.data().acceptedComplaints;
+        let complaintStatusArray = [];
+
+        for (const ids of acceptedComplaintIDs.values()){
+            complaintRecord = await db.collection("Complaints").doc(ids).get();
+            complaintStatusArray.push(complaintRecord.data().status);
+        } 
+
+        if (response1){
+            res.send({status: "ok", updatedStatus: newStatus, complaintStatusArray: complaintStatusArray});
+        }
+        else{
+            res.send({status: "error"});
+        }
+
+    }catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
 
 
 const PORT = process.env.PORT || 8080;
