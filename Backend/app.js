@@ -426,6 +426,42 @@ app.post('/AcceptComplaint', async(req, res)=>{
 })
 
 
+
+app.post('/ViewAcceptedComplaints', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+
+        const username = req.body.username;
+
+        const plumberData = await db.collection("RegisteredPlumber").doc(username).get();
+
+        // console.log(plumberData.data());
+        const acceptedComplaintIDs = plumberData.data().acceptedComplaints;
+        
+        const acceptedComplaintArray = [];
+        const customers = [];
+        var complaintRecord;
+        
+        for (const ids of acceptedComplaintIDs.values()){
+            complaintRecord = await db.collection('Complaints').doc(ids).get();
+            acceptedComplaintArray.push(complaintRecord.data().complaint);
+            customers.push(complaintRecord.data().username);
+        }
+        
+        console.log("Accepted Complaint: ", acceptedComplaintArray);
+        res.json({status: "ok", acceptedComplaintIDs: acceptedComplaintIDs, acceptedComplaintArray: acceptedComplaintArray, customerUsernames: customers});
+        
+
+    }catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
+
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT,() => {
