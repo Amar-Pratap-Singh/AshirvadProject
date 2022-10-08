@@ -26,8 +26,10 @@ function ComplaintCard(props){
         console.log(result.status);
         props.setComplaints(updatedComplaints);
         props.setComplaintIDs(updatedComplaintIDs);
+        
+        
         console.log(updatedComplaintIDs);
-        console.lof(props.complaintIDs);
+        console.log(props.complaintIDs);
     }
 
     return(

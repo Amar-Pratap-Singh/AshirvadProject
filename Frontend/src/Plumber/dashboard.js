@@ -59,7 +59,7 @@ function PlumberDashboard(props){
 
             console.log(result.status);
 
-            props.setAcceptedComplaints(result.acceptedComplaintArray, result.acceptedComplaintIDs, result.customerUsernames);
+            props.setAcceptedComplaints(result.acceptedComplaintArray, result.acceptedComplaintIDs, result.complaintsStatus, result.customerUsernames);
             props.navigator('view-accepted-complaints', false);
         }
 

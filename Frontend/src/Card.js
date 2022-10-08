@@ -1,21 +1,40 @@
 import { React } from 'react';
+import Navbar from './Navbar';
 
 function Card(props){
 
-    function clicked(){
-        alert(props.complaintID);
-    }
+    function nextPage(){
+        props.setPageComplaintID(props.complaintID);
+        props.setPageComplaintStatus(props.status);
 
+        if (props.status === "accepted")
+            props.navigator("page-2", true);
+    
+        else if (props.status === "visited")
+            props.navigator("page-3", true);
+        
+        else if (props.status === "tobeExecuted")
+            props.navigator("page-4", true);
+        
+        else if (props.status === "paused")
+            props.navigator("page-5", true);
+        
+        else if (props.status === "executed")
+            props.navigator("page-6", true);
+    }
+        
 
     return (
-        <div class="card accepted-complaints" onClick={clicked}>
+        <div class="card">
             <h5 class="card-header">Complaint ID: {props.complaintID}</h5>
             <div class="card-body">
                 <h5 class="card-title">Raised By: {props.customerUsername}</h5>
+                <h5 class="card-title">Status: {props.status}</h5>
                 <p class="card-text">{props.complaint}</p>
-                {/* <button class="btn btn-primary">Accept</button> */}
+                <button onClick={nextPage} class="btn btn-primary">Update Status</button>
             </div>
         </div>
+
     );
 }
 

@@ -17,7 +17,13 @@ function AcceptedComplaints(props){
                         index={index} 
                         customerUsername={props.customers[index]}
                         complaintID={props.acceptedComplaintIDs[index]} 
-                        complaint={complaint} />
+                        complaint={complaint} 
+                        status={props.complaintsStatus[index]}
+                        setComplaintIndex={props.setComplaintIndex}
+                        setPageComplaintStatus={props.setPageComplaintStatus}
+                        setPageComplaintID={props.setPageComplaintID}
+                        navigator={props.navigator}
+                        />
                         <br></br>
                     </div>
                 ))}
