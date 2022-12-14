@@ -340,10 +340,14 @@ app.post('/ViewComplaintHistory', async(req, res)=>{
 
         const complaintArray = [];
         var complaintRecord;
+        var complaintData;
         
         for (const ids of customerComplaints.values()){
             complaintRecord = await db.collection('Complaints').doc(ids).get();
-            complaintArray.push(complaintRecord.data().complaint);
+            complaintData = complaintRecord.data();
+
+            complaintData.id = ids;
+            complaintArray.push(complaintData);
         }
         
         res.json({status: "ok", complaintArray: complaintArray});
@@ -355,7 +359,63 @@ app.post('/ViewComplaintHistory', async(req, res)=>{
 })
 
 
-// ################################################################## 
+// Cancel Complaint
+app.post('/CancelComplaint',  async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+        const complaintID = req.body.complaintID;
+
+        const response = await db.collection("Complaints").doc(complaintID).set({
+            status: "cancelled"
+        }, {merge: true});
+
+        if (response){
+            res.json({status: "ok"});
+        }
+        else{
+            res.json({status: "error"});
+        }
+    }
+    catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
+
+// Submit Feedback
+app.post('/SubmitFeedback', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+        const complaintID = req.body.complaintID;
+        const feedback = req.body.feedback;
+
+        const response = await db.collection("Complaints").doc(complaintID).set({
+            status: "completed",
+            feedback: feedback
+        }, {merge: true});
+
+        if (response){
+            res.json({status: "ok"});
+        }
+        else{
+            res.json({status: "error"});
+        }
+    }
+    catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
+
+// ################################################################## PLUMBER ##############################################################################
 app.post('/MyComplaints', async(req, res)=>{
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -542,6 +602,465 @@ app.post('/NextPage', async(req, res)=>{
         return;
     }
 })
+
+
+
+// ################################################################## MANAGER ##############################################################################
+
+app.post('/AssignComplaints', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+        
+        const plumbers = await db.collection("RegisteredPlumber").get();
+        const plumbersIDArray = [];
+        const plumbersDataArray = [];
+        
+        plumbers.forEach(doc => {
+            plumbersIDArray.push(doc.id);
+            plumbersDataArray.push(doc.data());
+        });
+        
+        res.send({status: "ok", plumbersIDArray: plumbersIDArray, plumbersDataArray: plumbersDataArray});
+
+  
+    }catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
+
+app.post('/ManagerCheckComplaints', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+        
+        const complaints = await db.collection("Complaints").get();
+        const complaintsIDArray = [];
+        const complaintsDataArray = [];
+        
+        complaints.forEach(doc => {
+            complaintsIDArray.push(doc.id);
+            complaintsDataArray.push(doc.data());
+        });
+        
+        res.send({status: "ok", complaintsIDArray: complaintsIDArray, complaintsDataArray: complaintsDataArray});
+  
+    }catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
+app.post('/AssignComplaintToPlumber', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+        
+        const plumberUsername = req.body.plumberUsername;
+        const complaintID = req.body.complaintID;
+        var response = 1;
+
+        const complaintDoc = db.collection("Complaints").doc(complaintID);
+        if (!complaintDoc){
+            alert("Invalid Complaint ID");
+        }
+        else{
+            const complaintData = await complaintDoc.get();
+            
+            if (complaintData.data().status !== "raised"){
+                alert("Complaint already assigned!");
+            } 
+            else{
+
+                const plumberData = await db.collection("RegisteredPlumber").doc(plumberUsername).get();
+                var plumberComplaints = plumberData.data().complaints;
+                plumberComplaints.push(complaintID);
+                
+                // Update the document
+                response = await db.collection("RegisteredPlumber").doc(plumberUsername).set({
+                    complaints: plumberComplaints
+                }, {merge: true});
+            }
+        }
+        if (response){
+            res.send({status: "ok"});
+        }
+        else{
+            res.send({status: "error"});
+        }
+  
+    }catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
+
+
+// Assign complaint to plumbers automatically
+app.post('/AutoAssignComplaints', async(req, res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try{
+
+        // Check for all the customers' complaint in raised condition
+        const complaints = await db.collection("Complaints").get();
+        const complaintsID = [];
+        
+        complaints.forEach(doc => {
+            complaintsID.push(doc.id);
+        });
+
+
+        // Check plumbers
+        const plumbers = await db.collection("RegisteredPlumber").get();
+        const plumberUsernames = [];
+        // const complaintsDataArray = [];
+        
+        plumbers.forEach(doc => {
+            plumberUsernames.push(doc.id);
+        });
+    
+
+        let n = plumberUsernames.length;
+        let k = complaintsID.length;
+
+        // Assign weights and capacity and (plumbers + customers + 2) X (plumbers + customers + 2) array
+        let cap = [];
+        let cost = [];
+        let temp = [];
+        let temp2 = [];
+    
+
+        // from each plumber add a forward edge to every customers
+        for (var i=0; i<n ;i++){
+            
+            temp = [];
+            temp2 = [];
+
+            for (var j=0; j<n ;j++){
+                temp.push(0);
+                temp2.push(0);
+            }
+            for (var j=n; j<n+k ;j++){
+                temp.push(1);
+                temp2.push(2); 
+            }
+            // to source node
+            temp.push(0);
+            temp2.push(0);
+
+            // to sink node
+            temp.push(0);
+            temp2.push(0);
+
+            cap.push(temp);
+            cost.push(temp2);
+        }
+
+        // from each customer add a forward edge to the sink
+        // each customer request can be served by at max 3 plumbers
+        for (var i=n; i<n+k; i++){
+            temp = []
+            temp2 = []
+            for (var j=0; j<n+k;j++){
+                temp.push(0);
+                temp2.push(0);
+            }
+            // to source
+            temp.push(0);
+            temp2.push(0);
+
+            // to sink
+            temp.push(3);
+            temp2.push(2);
+
+            cap.push(temp);
+            cost.push(temp2);
+        }
+
+
+        // from source node to every plumber node
+        // each plumber can serve at max 3 customers
+        temp = [];
+        temp2 = [];
+        for (var i=0; i<n ;i++){
+            temp.push(2);
+            temp2.push(4);
+        }
+        for (var i=n; i<n+k; i++){
+            temp.push(0);
+            temp2.push(0);
+        }
+
+        // to itself and sink node
+        temp.push(0);
+        temp.push(0);
+        temp2.push(0);
+        temp2.push(0);
+        
+        cap.push(temp);
+        cost.push(temp2);
+
+        // no outgoing edges from sink node
+        temp = []
+        temp2 = []
+        for (var i=0; i<n+k+2 ;i++){
+            temp.push(0);
+            temp2.push(0);
+        }
+
+        cap.push(temp);
+        cost.push(temp2);
+
+        // console.log("Cap: ", cap);
+        // console.log("Cost: ", cost)
+        // Weights
+
+        
+
+        // We need to call algo here      
+        // algo will return assignment of plumbers to customers
+        function MinCostMaxFlow(cap, cost, s, t){
+
+            let maxsize = Number.MAX_VALUE
+        
+            // Stores the found edges
+            let found = []
+        
+            // Stores the number of nodes
+            let N = 0
+        
+            // Stores the capacity
+            // of each edge
+        
+            let flow = []
+        
+            // Stores the cost per
+            // unit flow of each edge
+        
+            // Stores the distance from each node
+            // and picked edges for each node
+            let dad = []
+            let dist = []
+            let pi = []
+            let assignment = [];
+        
+            let INF = Math.floor(maxsize / 2) - 1
+        
+            // Function to check if it is possible to
+            // have a flow from the src to sink
+            function search(src, sink)
+            {
+        
+                // Initialise found[] to false
+                let found = new Array(N).fill(false)
+        
+                // Initialise the dist[] to INF
+                let dist = new Array(N + 1).fill(INF)
+        
+                // Distance from the source node
+                dist[src] = 0
+        
+                // Iterate until src reaches N
+                while (src != N)
+                {
+                    let best = N
+                    found[src] = true
+                    
+                    for (var k = 0; k < N; k++)
+                    {
+        
+                        // If already found
+                        if (found[k])
+                            continue
+        
+                        // Evaluate while flow
+                        // is still in supply
+                        if (flow[k][src] != 0)
+                        {
+                            // Obtain the total value
+                        let val = (dist[src] + pi[src] -
+                                    pi[k] - cost[k][src])
+        
+                            // If dist[k] is > minimum value
+                            if (dist[k] > val)
+                            {
+                                // Update
+                                dist[k] = val
+                                dad[k] = src
+                            }
+                        }
+        
+                        if (flow[src][k] < cap[src][k])
+                        {
+                            let val = (dist[src] + pi[src] -
+                                    pi[k] + cost[src][k])
+        
+                            // If dist[k] is > minimum value
+                            if (dist[k] > val)
+                            {
+                                // Update
+                                dist[k] = val
+                                dad[k] = src
+                            }
+                        }
+        
+                        if (dist[k] < dist[best])
+                            best = k
+                    }
+        
+                    // Update src to best for
+                    // next iteration
+                    src = best
+                }
+        
+                for (var k = 0; k < N; k++)
+                    pi[k] = Math.min(pi[k] + dist[k], INF)
+        
+                // Return the value obtained at sink
+                return found[sink]
+            }
+        
+            // Function to obtain the maximum Flow
+            function getMaxFlow(capi, costi,  src, sink)
+            {
+        
+                cap = capi
+                cost = costi
+        
+                N = (capi).length
+                found =  new Array(N).fill(false); 
+                    
+                flow = new Array(N);
+                for (var i = 0; i < N; i++)
+                    flow[i] = new Array(N).fill(0)
+                
+                dist = new Array(N + 1).fill(INF)
+                
+                dad = new Array(N).fill(0)
+                pi = new Array(N).fill(0)
+                
+                totflow = 0
+                totcost = 0
+        
+        
+        
+                // If a path exist from src to sink
+                while (search(src, sink))
+                {
+                    let paths = [sink];
+                    // Set the default amount
+                    amt = INF
+                    x = sink
+                    
+                    while (x != src)
+                    {
+                        amt = Math.min(
+                            amt,
+                            (flow[x][dad[x]] != 0)?flow[x][dad[x]]:
+                            cap[dad[x]][x] - flow[dad[x]][x])
+                        x = dad[x]
+                    }
+        
+                    x = sink
+                    
+                    while (x != src)
+                    {
+                        // if dad[x] == 0, then add the existing array into a bigger array
+                        paths.push(dad[x]);
+        
+                        if (flow[x][dad[x]] != 0)
+                        {
+                            flow[x][dad[x]] -= amt
+                            totcost -= amt * cost[x][dad[x]]
+                        }
+                        else
+                        {
+                            flow[dad[x]][x] += amt
+                            totcost += amt * cost[dad[x]][x]
+                        }
+                        x = dad[x]
+                    }
+        
+                    totflow += amt
+        
+                    assignment.push(paths);
+                }
+                // Return pair total cost and sink
+                return assignment;
+            }
+        
+        
+            return getMaxFlow(cap, cost, s, t);
+            
+            // Possible assignments 
+            // console.log(assignment);
+        }
+        
+
+        let assignment = MinCostMaxFlow(cap, cost, n+k, n+k+1);
+
+        let plumberCustomer = []
+        for (var i=0; i<assignment.length ;i++){
+            plumberCustomer.push([complaintsID[(assignment[i])[1] - n], plumberUsernames[(assignment[i])[2]]]);
+            // plumberCustomer.push([(assignment[i])[1], (assignment[i])[2]]);
+        }
+
+        // plumberCustomer = [ [complantID, plumberUsername], [complaintID, plumberUsername] ] 
+        console.log(plumberCustomer);
+        
+
+        for (var i=0; i<plumberCustomer.length ;i++){
+            let plumberUsername = (plumberCustomer[i])[1];
+            let complaintID = (plumberCustomer[i])[0];
+            // var response = 1;
+
+            let complaintDoc = db.collection("Complaints").doc(complaintID);
+            if (!complaintDoc){
+                alert("Invalid Complaint ID");
+            }
+            else{
+                let complaintData = await complaintDoc.get();
+                
+                if (complaintData.data().status !== "raised"){
+                    alert("Complaint already assigned!");
+                } 
+                else{
+
+                    let plumberData = await db.collection("RegisteredPlumber").doc(plumberUsername).get();
+                    var plumberComplaints = plumberData.data().complaints;
+                    plumberComplaints.push(complaintID);
+                    
+                    // Update the document
+                    response = await db.collection("RegisteredPlumber").doc(plumberUsername).set({
+                        complaints: plumberComplaints
+                    }, {merge: true});
+                }
+            }
+        }
+
+        // Assign these complaints to plumbers
+        // show all the customers' complaint assigned to a plumber in his assignedComplaint part
+        // Once, a plumber accepts a complaint... We will remove that complaint from other plumbers... And show the assigned Plumber to customer
+
+
+    }catch(error){
+        res.send({status: error});
+        return;
+    }
+})
+
 
 
 
