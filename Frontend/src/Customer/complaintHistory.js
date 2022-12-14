@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../Navbar';
-
+import HistoryCard from '../HistoryCard';
 
 function ViewComplaintHistory(props){
 
@@ -10,15 +10,20 @@ function ViewComplaintHistory(props){
             
             <div class="center_div">
                 <h1>Your Complaints</h1>
-                <ul>
-                    {Object.entries(props.userComplaintsHistory).map((key, value) => (
-                        <div class="card">
-                            <div class="card-body">
-                                {key[1]}
-                            </div>
-                        </div>
-                    ))}
-                </ul>
+
+                {props.userComplaintsHistory.map((complaintData, index) => (
+                    <div>
+                        <HistoryCard 
+                        index={index}
+                        id={complaintData.id} 
+                        complaint={complaintData.complaint}
+                        status={complaintData.status}
+                        navigator={props.navigator}
+                        setComplaintID={props.setComplaintID}
+                        />
+                        <br></br>
+                    </div>
+                ))}
             </div>
         </div>
     );

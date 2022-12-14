@@ -1,5 +1,5 @@
 import { React } from 'react';
-
+import Navbar from '../Navbar';
 
 function Page5(props){
 
@@ -48,14 +48,18 @@ function Page5(props){
     }
 
     return (
-        <div class="center_div">
-            <h1>What after pause?</h1>
+        <div>
+            <Navbar props={props}/>
+            
+            <div class="center_div">
+                <h1>What after pause?</h1>
 
-            <form id="page">
-                <button class="btn btn-primary" onClick={handleButtonClick} name="Resume" type="submit">Resume</button>
-                <button class="btn btn-primary" onClick={cancelComplaint} name="Cancel" type="submit">Cancel</button>
-            </form>
-        </div>        
+                <form id="page">
+                    <button class="btn btn-primary" onClick={handleButtonClick} name="Resume" type="submit">Resume</button>
+                    <button class="btn btn-primary" onClick={cancelComplaint} name="Cancel" type="submit">Cancel</button>
+                </form>
+            </div>        
+        </div>
     );
 }
 

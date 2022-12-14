@@ -35,6 +35,9 @@ form{
     /* margin-bottom: 10px; */
 } 
 
+.btn {
+    margin-left: 5px;
+}
 
 .profile-pic {
     margin-right: 10px;
@@ -43,8 +46,4 @@ form{
 
 .drop-down-menu{
     display: inline;
-}
-
-.accepted-complaints{
-    
 }

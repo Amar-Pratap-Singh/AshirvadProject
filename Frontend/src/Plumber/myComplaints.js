@@ -17,7 +17,16 @@ function MyComplaints(props){
                 
                 {complaints.map((complaint, index) => (
                     <div>
-                        <ComplaintCard index={index} plumberUsername={props.userDetails.userName} complaints={complaints} complaintIDs={complaintIDs} setComplaintIDs={setComplaintIDs} setComplaints={setComplaints} customerUsername={props.customers[index]} complaintID={complaintIDs[index]} complaint={complaint} />
+                        <ComplaintCard 
+                        index={index} 
+                        plumberUsername={props.userDetails.userName} 
+                        complaints={complaints} 
+                        complaintIDs={complaintIDs} 
+                        setComplaintIDs={setComplaintIDs} 
+                        setComplaints={setComplaints} 
+                        customerUsername={props.customers[index]} 
+                        complaintID={complaintIDs[index]} 
+                        complaint={complaint} />
                         <br></br>
                     </div>
                 ))}

@@ -1,4 +1,5 @@
 import { React } from 'react';
+import Navbar from '../Navbar';
 
 
 function Page3(props){
@@ -46,14 +47,18 @@ function Page3(props){
     }
 
     return (
-        <div class="center_div">
-            <h1>Raise a Quotation</h1>
+        <div>
+            <Navbar props={props} />
 
-            <form id="page">
-                <button class="btn btn-primary" onClick={handleButtonClick} name="RaiseQuotation" type="submit">Raise a Quotation</button>
-                <button class="btn btn-primary" onClick={cancelComplaint} name="Cancel" type="submit">Cancel</button>
-            </form>
-        </div>        
+            <div class="center_div">
+                <h1>Raise a Quotation</h1>
+
+                <form id="page">
+                    <button class="btn btn-primary" onClick={handleButtonClick} name="RaiseQuotation" type="submit">Raise a Quotation</button>
+                    <button class="btn btn-primary" onClick={cancelComplaint} name="Cancel" type="submit">Cancel</button>
+                </form>
+            </div>        
+        </div>
     );
 }
 

@@ -10,12 +10,16 @@ import HomeScreenPage from './homeScreen';
 import ViewComplaintHistory from './Customer/complaintHistory';
 import MyComplaints from './Plumber/myComplaints';
 import AcceptedComplaints from './Plumber/acceptedComplaints';
+import SubmitFeedback from './SubmitFeedback';
 import Page2 from './Pages/page2';
 import Page3 from './Pages/page3';
 import Page4 from './Pages/page4';
 import Page5 from './Pages/page5';
 import Page6 from './Pages/page6';
 import Page7 from './Pages/page7';
+
+import AllComplaints from './Manager/allComplaints';
+import AssignComplaints from './Manager/assignComplaints';
 
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -60,6 +64,18 @@ function App(props) {
   const [pageComplaintStatus, setPageComplaintStatus] = useState(""); 
 
 
+  // below 2 variables are used in manager for storing all the complaint ID and complaint Data
+  const [allComplaintIDs, setAllComplaintsIDArray] = useState([]);
+  const [allComplaintData, setAllComplaintsDataArray] = useState([]);
+
+  // below 2 variables are used in manager for storing all the plumber ID and complaint Data
+  const [allPlumberIDs, setAllPlumbersIDArray] = useState([]);
+  const [allPlumberData, setAllPlumbersDataArray] = useState([]);
+
+  // to submit feedback for a complaintID
+  const [complaintID, setComplaintID] = useState('');
+
+
   function setUserDetails(username, contact, firstName, lastName, email){
     setUserName(username);
     setUserContact(contact);
@@ -92,6 +108,16 @@ function App(props) {
 
   function setComplaintIndex(index){
     setIndex(index);
+  }
+
+  function setAllComplaints(allComplaintIDs, allComplaintData){
+    setAllComplaintsIDArray(allComplaintIDs);
+    setAllComplaintsDataArray(allComplaintData);
+  }
+
+  function setAllPlumbers(allPlumberIDs, allPlumberData){
+    setAllPlumbersIDArray(allPlumberIDs);
+    setAllPlumbersDataArray(allPlumberData);
   }
 
   // ************** Not needed *****************
@@ -128,7 +154,8 @@ function App(props) {
      {/*.......... Customer ..........*/}
       <Route exact path="customer-dashboard" element={<CustomerDashboard logOut={logOut} setComplaintsHistory={setComplaintsHistory}  userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
       <Route exact path="raise-complaint" element={<RaiseComplaint logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="view-complaint-history" element={<ViewComplaintHistory logOut={logOut} userComplaintsHistory={userComplaintsHistory} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="view-complaint-history" element={<ViewComplaintHistory logOut={logOut} setComplaintID={setComplaintID} userComplaintsHistory={userComplaintsHistory} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="submit-feedback" element={<SubmitFeedback logOut={logOut} complaintID={complaintID} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
 
 
       {/*.......... Plumber .........*/}
@@ -143,7 +170,9 @@ function App(props) {
       <Route exact path="page-7" element={<Page7 logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
       
       {/* Manager */}
-      <Route exact path="manager-dashboard" element={<ManagerDashboard logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="manager-dashboard" element={<ManagerDashboard logOut={logOut} setAllPlumbers={setAllPlumbers} setAllComplaints={setAllComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="all-complaints" element={<AllComplaints logOut={logOut} allComplaintIDs={allComplaintIDs} allComplaintData={allComplaintData} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="assign-complaints" element={<AssignComplaints logOut={logOut} allPlumberIDs={allPlumberIDs} allPlumberData={allPlumberData} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
     </Routes>
     </>
   );
