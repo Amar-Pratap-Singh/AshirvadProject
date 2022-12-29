@@ -1,0 +1,73 @@
+	
+G -> Directed Graph with no multiple edges
+s -> source node
+t -> sink node (destination node)
+
+
+//HELPER FUNCTION
+MinCostMaxFlow(G,s,t) 
+{
+	
+	For all edges (u,v) in graph G
+	{
+		add edge (v,u) with capacity 0, and cost = -Cost of edge (u,v);
+	}
+
+	FlowMap[][] -> Keeps Track of flow through any edge (u,v) in Graph; (Initially 0 for all edges) 
+			
+	Initially, flow = 0;
+
+	Residual Graph G' = G
+	
+	while there exists a path from s to t in graph G'
+	{
+		Find Shortest Path from s to t, say p.
+		
+		Cost = Cost + Cost of path p
+		
+		max_flow_possible (f) = min(Capacities of all edges in path p)
+		For every edge (u,v) in path p
+		{
+			increase flow by f.
+			decrease capacity by f.
+			increase capacity of edge (v,u) by f.
+			
+			FlowMap[u][v] += f;
+		}
+	}
+	
+	return FlowMap;
+} 
+
+
+//MAIN FUNCTION
+fac_apps -> List of (faculty, application, list of common topics between faculty and application) for all faculties and applications if there exist a common topic between them.
+
+Calculate_Panels(fac_apps)
+{
+	Make a Bipartite Graph (G) where,
+		left column of nodes are represented by all faculties 
+		right column of nodes are represented by all applications.
+	
+	For each faculty and appplication in 'fac_apps'
+	{
+		add edge between the corresponding faculty and node. (direction is from faculty node to application node)
+		Assign capacity of this edge as 1.
+		Assign the cost of this edge as described previously
+	}
+	
+	Modify the graph G:-
+		- Add a source node s, and add all edges from source to faculty with capacity MAX_PANEL_PER_FACULTY and cost 0.
+		- Add a sink node t, and add edges from all application nodes to sink node with capacity PANEL_SIZE and cost 0.
+		
+	FlowMap, TotalCost = MinCostMaxFlow(G,s,t)
+	
+	For every edge in flow map
+	{
+		if(NetFlow in an edge(fac,app) is 1)
+		{
+			we add faculty 'fac' in review panel of 'app'
+		}
+	}
+		
+}	

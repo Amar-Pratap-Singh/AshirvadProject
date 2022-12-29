@@ -1,11 +1,22 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
-import CircularJSON from 'circular-json';
-import RaiseComplaint from './raiseComplaint';
 
 
 function SignUp(props){
     
+
+    function ShowSpecialisationList(){
+        // const check = document.getElementsByName("RadioSignUp");
+        // console.log(check);
+        const isCheckedPlumber = document.getElementById("RadioSignUpAsPlumber").checked;
+
+        if (isCheckedPlumber){
+            document.getElementById("SpecialisationList").style.display = "block";
+        }
+        else{
+            document.getElementById("SpecialisationList").style.display = "none";
+        }
+    }
+
     function triggerSignUp(){
         const form = document.getElementById("signUp-form");
         form.addEventListener('submit', signUp);
@@ -23,6 +34,9 @@ function SignUp(props){
             const RolePlumber = document.getElementById("RadioSignUpAsPlumber").checked;
             const RoleManager = document.getElementById("RadioSignUpAsManager").checked;
 
+            const Specialisations = ["BasinSink", "Grouting", "BathFitting", "DrainagePipe", "Toilet", "TapMixer", "WaterTank", "Motor", "WaterConnection"]
+            const plumberSpecialisations = []
+            
             let roleCustomer = "", rolePlumber = "", roleManager = "";
 
             if (RoleCustomer){
@@ -30,10 +44,18 @@ function SignUp(props){
             }
             if (RolePlumber){
                 rolePlumber = "Plumber";
+    
+                Specialisations.forEach((Specialisation) => {
+                    if (document.getElementById(Specialisation).checked){
+                        plumberSpecialisations.push(Specialisation);
+                    }
+                });
             }
             if (RoleManager){
                 roleManager = "Manager";
             }
+
+            console.log(plumberSpecialisations);
 
             const result = await fetch("http://localhost:8080/SignUp", {
                 method: "POST",
@@ -47,7 +69,8 @@ function SignUp(props){
                     Email,
                     Contact,
                     Password,
-                    Role: [roleCustomer, rolePlumber, roleManager]
+                    Role: [roleCustomer, rolePlumber, roleManager],
+                    plumberSpecialisations
                 }),    
             }).then((res) => res.json());
 
@@ -110,25 +133,59 @@ function SignUp(props){
 
                     <div class="col-8">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="RadioSignUpAsCustomer" id="RadioSignUpAsCustomer" value="option1" />
+                            <input onClick={ShowSpecialisationList} class="form-check-input" type="radio" name="RadioSignUp" id="RadioSignUpAsCustomer" value="option1" />
                             <label class="form-check-label" for="RadioSignUpAsCustomer">
                                 Customer
                             </label>
                         </div>
 
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="RadioSignUpAsPlumber" id="RadioSignUpAsPlumber" value="option2" />
+                            <input onClick={ShowSpecialisationList} class="form-check-input" type="radio" name="RadioSignUp" id="RadioSignUpAsPlumber" value="option2" />
                             <label class="form-check-label" for="RadioSignUpAsPlumber">
                                 Plumber
                             </label>
                         </div>
                         
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="RadioSignUpAsManager" id="RadioSignUpAsManager" value="option3" />
+                            <input onClick={ShowSpecialisationList} class="form-check-input" type="radio" name="RadioSignUp" id="RadioSignUpAsManager" value="option3" />
                             <label class="form-check-label" for="RadioSignUpAsManager">
                                 Manager
                             </label>
                         </div>
+                    </div>
+                </div>
+
+                <div id="SpecialisationList" class="PlumberSpecialisations form-group">
+                    <label>Choose Your Specializations</label>
+                    <div class="ComplaintCategories col-8">
+                            
+                        <input type="checkbox" id="BasinSink" value="BasinSink" />
+                        <label for="BasinSink"> Basin & Sink </label><br></br>
+                        
+                        <input type="checkbox" id="Grouting" value="Grouting" />
+                        <label for="Grouting"> Grouting </label><br></br>
+                        
+                        <input type="checkbox" id="BathFitting" value="BathFitting" />
+                        <label for="BathFitting"> Bath fitting </label><br></br>
+
+                        <input type="checkbox" id="DrainagePipe" value="DrainagePipe" />
+                        <label for="DrainagePipe"> Drainage Pipe </label><br></br>
+
+                        <input type="checkbox" id="Toilet" value="Toilet" />
+                        <label for="Toilet"> Toilet </label><br></br>
+
+                        <input type="checkbox" id="TapMixer" value="TapMixer" />
+                        <label for="TapMixer"> Tap & Mixer </label><br></br>
+
+                        <input type="checkbox" id="WaterTank" value="WaterTank" />
+                        <label for="WaterTank"> Water Tank </label><br></br>
+
+                        <input type="checkbox" id="Motor" value="Motor" />
+                        <label for="Motor"> Motor </label><br></br>
+
+                        <input type="checkbox" id="WaterConnection" value="WaterConnection" />
+                        <label for="WaterConnection"> Water Connection </label><br></br>
+                    
                     </div>
                 </div>
                 

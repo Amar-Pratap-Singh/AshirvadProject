@@ -1,7 +1,4 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
-import CircularJSON from 'circular-json';
-import RaiseComplaint from './raiseComplaint';
 
 
 function SignIn(props){
@@ -48,21 +45,37 @@ function SignIn(props){
 
             if(result.status === "ok") {
                 props.setUserDetails(result.userData.username, result.userData.contact, result.userData.firstName, result.userData.lastName, result.userData.email);
-                props.navigator('dashboard', false);
+
+                switch (role){
+                    case "Customer":
+                        props.navigator('customer-dashboard', false);
+                        break;
+
+                    case "Plumber":
+                        props.navigator('plumber-dashboard', false);
+                        break;
+
+                    case "Manager":
+                        props.navigator('manager-dashboard', false);
+                        break;
+
+                    default:
+                        console.log("Invalid User Type!!");
+                }
             }
         }
     }
 
 
-    function registerNewRole(){
-        const form = document.getElementById("login-form");
-        form.addEventListener('submit', registerForNewRole);
+    // function registerNewRole(){
+    //     const form = document.getElementById("login-form");
+    //     form.addEventListener('submit', registerForNewRole);
 
-        async function registerForNewRole(event){
-            event.preventDefault();
-            props.navigator('register-new-role', false);
-        }
-    }
+    //     async function registerForNewRole(event){
+    //         event.preventDefault();
+    //         props.navigator('register-new-role', false);
+    //     }
+    // }
 
 
     return (
@@ -111,7 +124,7 @@ function SignIn(props){
                 </div>
              
                 <button onClick={triggerSignIn} name="SignInButton" type="submit" class="submit-btn btn btn-primary">Login</button>
-                <button onClick={registerNewRole} name="RegisterNewRole" type="submit" class="submit-btn btn btn-primary">Register for New Role</button>
+                {/* <button onClick={registerNewRole} name="RegisterNewRole" type="submit" class="submit-btn btn btn-primary">Register for New Role</button> */}
             </form>
         </div>
     );
