@@ -6,6 +6,7 @@ import { useState } from 'react';
 function MyComplaints(props){
 
     const [complaints, setComplaints] =  useState(props.assignedComplaints);
+    const [complaintIDs, setComplaintIDs] = useState(props.assignedComplaintIDs);
 
     return (
         <div>
@@ -16,19 +17,19 @@ function MyComplaints(props){
                 
                 {complaints.map((complaint, index) => (
                     <div>
-                        <ComplaintCard index={index} complaints={complaints} setComplaints={setComplaints} customerUsername={props.customers[index]} complaintID={props.assignedComplaintIDs[index]} complaint={complaint} />
+                        <ComplaintCard 
+                        index={index} 
+                        plumberUsername={props.userDetails.userName} 
+                        complaints={complaints} 
+                        complaintIDs={complaintIDs} 
+                        setComplaintIDs={setComplaintIDs} 
+                        setComplaints={setComplaints} 
+                        customerUsername={props.customers[index]} 
+                        complaintID={complaintIDs[index]} 
+                        complaint={complaint} />
                         <br></br>
                     </div>
                 ))}
-
-                {/* {Object.entries(props.assignedComplaints).map((key, value) => ( 
-                    <div>
-                        <ComplaintCard customerUsername={props.customers[key[0]]} complaintID={props.assignedComplaintIDs[key[0]]} complaint={key[1]} />
-                        <br></br>
-                    </div>
-                ))}  */}
-                
-                {/* tasks goes here */}
              
             </div>
         </div>

@@ -67,15 +67,15 @@ function SignIn(props){
     }
 
 
-    function registerNewRole(){
-        const form = document.getElementById("login-form");
-        form.addEventListener('submit', registerForNewRole);
+    // function registerNewRole(){
+    //     const form = document.getElementById("login-form");
+    //     form.addEventListener('submit', registerForNewRole);
 
-        async function registerForNewRole(event){
-            event.preventDefault();
-            props.navigator('register-new-role', false);
-        }
-    }
+    //     async function registerForNewRole(event){
+    //         event.preventDefault();
+    //         props.navigator('register-new-role', false);
+    //     }
+    // }
 
 
     return (
@@ -124,7 +124,7 @@ function SignIn(props){
                 </div>
              
                 <button onClick={triggerSignIn} name="SignInButton" type="submit" class="submit-btn btn btn-primary">Login</button>
-                <button onClick={registerNewRole} name="RegisterNewRole" type="submit" class="submit-btn btn btn-primary">Register for New Role</button>
+                {/* <button onClick={registerNewRole} name="RegisterNewRole" type="submit" class="submit-btn btn btn-primary">Register for New Role</button> */}
             </form>
         </div>
     );

@@ -6,7 +6,30 @@ function ComplaintCard(props){
         alert("Accepted Complaint with Complaint ID: " + props.complaintID);
         
         const updatedComplaints = props.complaints.filter((_, i) => i !== props.index);
+        const updatedComplaintIDs = props.complaintIDs.filter((_, i) => i !== props.index);
+        
+        const complaintID = props.complaintID;
+        const plumberUsername = props.plumberUsername;
+        
+        const result = fetch("http://localhost:8080/AcceptComplaint", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                complaintID,
+                plumberUsername,
+                updatedComplaintIDs
+            })
+        }).then((res) => res.json());
+        
+        console.log(result.status);
         props.setComplaints(updatedComplaints);
+        props.setComplaintIDs(updatedComplaintIDs);
+        
+        
+        console.log(updatedComplaintIDs);
+        console.log(props.complaintIDs);
     }
 
     return(
