@@ -1,59 +1,51 @@
-import { React } from 'react';
+import React from 'react';
 import Navbar from '../Navbar';
 
-function Page7(props) {
+function MakePayment(props) {
 
-    function handleButtonClick() {
+
+    function makePayment() {
         const form = document.getElementById("page");
-        form.addEventListener('submit', moveToNextPage);
+        form.addEventListener('submit', payBill);
 
-        async function moveToNextPage(event) {
+        async function payBill(event) {
             event.preventDefault();
 
-            const complaintID = props.pageComplaintID;
-            const currentStatus = props.pageComplaintStatus;
-            const plumberUsername = props.userDetails.userName;
-            const temp = "submit";
+            const complaintID = props.complaintID;
+            const amountToPay = document.getElementById("AmountToPay").value;
 
-            console.log("ComplaintID: ", complaintID);
-            console.log("currentStatus: ", currentStatus);
-            console.log("Plumber Username: ", plumberUsername);
-
-            const result = await fetch("http://localhost:8080/NextPage", {
+            const result = await fetch("http://localhost:8080/MakePayment", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     complaintID,
-                    currentStatus,
-                    plumberUsername,
-                    temp
+                    amountToPay
                 })
             }).then((res) => res.json());
 
-            props.setPageComplaintStatus(result.updatedStatus);
-
-            props.setComplaintsStatusArray(result.complaintStatusArray);
-            props.navigator("page-6", true);
-            // console.log("Status Changed: ",result.status);
+            alert("Payment Done!!");
+            console.log(result.status);
+            props.navigator("customer-dashboard", true);
+            // props.setJobCard(result.jobCardDetails);
         }
     }
 
-
+    // Need to add total bill amount 
 
     return (
         <div>
             <Navbar props={props} />
 
             <div class="center_div">
-            <h1>Job Card</h1>
+                <h1>Invoice</h1>
 
                 <div class="container">
                     <div class="card">
                         <div class="card-header">
                             Invoice:
-                            <strong> {props.pageComplaintID + props.jobCard.plumberUsername}  </strong>
+                            <strong> {props.complaintID + props.jobCard.plumberUsername}  </strong>
                             <span class="float-right"> <strong>Status:</strong> {props.jobCard.paid ? "Done" : "Pending"} </span>
                         </div>
 
@@ -98,19 +90,19 @@ function Page7(props) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                            <tr>
-                                                <td class="center">1</td>
-                                                <td class="left strong">{props.jobCard.quotation}</td>
-                                                <td class="left">Plumber</td>
+                                        <tr>
+                                            <td class="center">1</td>
+                                            <td class="left strong">{props.jobCard.quotation}</td>
+                                            <td class="left">Plumber</td>
 
-                                                <td class="right">{props.jobCard.quotationAmount}</td>
-                                                <td class="center">1</td>
-                                                <td class="right">{props.jobCard.quotationAmount}</td>
-                                            </tr>
-                                        
+                                            <td class="right">{props.jobCard.quotationAmount}</td>
+                                            <td class="center">1</td>
+                                            <td class="right">{props.jobCard.quotationAmount}</td>
+                                        </tr>
+
                                         {props.jobCard.purchaseTypeHistory.map((purchase, index) => (
                                             <tr>
-                                                <td class="center">{Number(index)+2}</td>
+                                                <td class="center">{Number(index) + 2}</td>
                                                 <td class="left strong">{props.jobCard.purchaseDetailsHistory[index]}</td>
                                                 <td class="left">{purchase}</td>
 
@@ -147,14 +139,14 @@ function Page7(props) {
                                                 <td class="left">
                                                     <strong>GST (10%)</strong>
                                                 </td>
-                                                <td class="right">₹ {Number(props.jobCard.billAmount)*0.10}</td>
+                                                <td class="right">₹ {Number(props.jobCard.billAmount) * 0.10}</td>
                                             </tr>
                                             <tr>
                                                 <td class="left">
                                                     <strong>Total</strong>
                                                 </td>
                                                 <td class="right">
-                                                    <strong>₹ {Number(props.jobCard.billAmount)*1.1}</strong>
+                                                    <strong>₹ {Number(props.jobCard.billAmount) * 1.1}</strong>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -168,13 +160,23 @@ function Page7(props) {
                     </div>
                     <br></br>
                 </div>
+                
                 <form id="page">
-                    {/* <input type="textbox" id="job-card" name="job-card" placeholder="Any other Details?"></input> */}
-                    <button class="btn btn-primary" onClick={handleButtonClick} name="Resume" type="submit">Submit</button>
+
+                    <div class="form-group">
+                        <label for="AmountToPay">Amount</label>
+                        <div class="col-8">
+                            <input type="number"  value={Number(props.jobCard.billAmount) * 1.1} class="form-control rounded-0" id="AmountToPay" />
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onClick={makePayment} name="Pay" type="submit">Proceed To Pay</button>
                 </form>
             </div>
-        </div>
+
+
+            </div>
     );
 }
 
-export default Page7;
+export default MakePayment; 

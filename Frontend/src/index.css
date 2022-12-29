@@ -1,22 +1,23 @@
-body{
+body {
     background-color: #EFFFFD;
+    background-image: url(../images/bg2.webp);
 }
 
-form{
+form {
     padding-left: 20px;
     padding-bottom: 10px;
 }
 
-.center_div{
-    background-color: white;
+.center_div {
+    background-color: transparent;
     width: 50%;
     margin: 10% 25%;
     border-radius: 2%;
-        
+
     /* justify-content: center; */
 }
 
-.center_div h1{
+.center_div h1 {
     padding: 10px;
     margin-bottom: 20px;
     background-color: #004262;
@@ -24,16 +25,16 @@ form{
     width: 100%;
 }
 
-#home-screen-page{
+#home-screen-page {
     /* display: grid; */
     /* width: 20%; */
     padding: 10px 10px;
 }
 
-.home-page-btn{
+.home-page-btn {
     margin-left: 5px;
     /* margin-bottom: 10px; */
-} 
+}
 
 .btn {
     margin-left: 5px;
@@ -44,6 +45,75 @@ form{
     border-radius: 100%;
 }
 
-.drop-down-menu{
+.drop-down-menu {
+    display: inline;
+}
+
+/* For Images to CheckBoxes */
+
+.ComplaintCategories input[type=checkbox] {
+    display: none;
+}
+
+.ComplaintCategories input[type=checkbox]+label {
+    background: #999;
+    height: 50px;
+    color: white;
+    width: 50%;
+    display: inline-block;
+    border-radius: 20px;
+    padding: 15px 0px 0 10px;
+    align-items: center;
+}
+
+.ComplaintCategories input[type=checkbox]:checked+label {
+    background: #0080FF;
+    color: white;
+    height: 50px;
+    width: 100%px;
+    display: inline-block;
+    border-radius: 20px;
+    padding: 15px 0px 0 10px;
+}
+
+
+
+/* Plumber Specialisation */
+.PlumberSpecialisations {
+    display: none;
+}
+
+
+.PartsPurchaseFromCompany {
+    display: none;
+}
+
+.PartsPurchaseFromOutside {
+    display: none;
+}
+
+
+.test-card {
+    width: 100%;
+    /* margin-left: 20%; */
+    /* margin: 5% 25% 0% 20%; */
+}
+
+.on {
+    color: rgb(229, 255, 0);
+}
+
+.off {
+    color: #ccc;
+}
+
+.star-rating {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+div[name="star-button"]{
     display: inline;
 }

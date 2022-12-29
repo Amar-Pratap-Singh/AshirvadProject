@@ -19,7 +19,7 @@ function Page2(props){
             console.log("currentStatus: ", currentStatus);
             console.log("Plumber Username: ", plumberUsername);
             
-            const result = await fetch("http://localhost:8080/NextPage", {
+            const result = await fetch("http://localhost:8080/Page2", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",

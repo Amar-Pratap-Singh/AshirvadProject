@@ -64,6 +64,7 @@ function ManagerDashboard(props){
                 }
             }).then((res) => res.json());
 
+            props.navigator("manager-dashboard", false);
             // props.setAllPlumbers(result.plumbersIDArray, result.plumbersDataArray);
 
             // props.navigator('assign-complaints', false);

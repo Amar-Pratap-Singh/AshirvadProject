@@ -16,6 +16,7 @@ function AssignComplaints(props){
                     index={index} 
                     plumberUsername={doc.username} 
                     navigator={props.navigator}
+                    complaintToAssign={props.complaintToAssign}
                     />
                     <br></br>
                 </div>

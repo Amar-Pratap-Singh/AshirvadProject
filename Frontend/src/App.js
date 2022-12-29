@@ -1,16 +1,20 @@
 import React from 'react';
-import RaiseComplaint from './Customer/raiseComplaint';
+
+import TestDemo from './testDemo';
+import HomeScreenPage from './homeScreen';
 import SignIn from './login';
 import SignUp from './signUp'; 
-import RegisterNewRole from './registerNewRole';
+
+import RaiseComplaint from './Customer/raiseComplaint';
 import CustomerDashboard from './Customer/dashboard';
-import PlumberDashboard from './Plumber/dashboard';
-import ManagerDashboard from './Manager/dashboard';
-import HomeScreenPage from './homeScreen';
 import ViewComplaintHistory from './Customer/complaintHistory';
+import SubmitFeedback from './SubmitFeedback';
+import Payment from './Customer/payment';
+import MakePayment from './Customer/makePayment';
+
+import PlumberDashboard from './Plumber/dashboard';
 import MyComplaints from './Plumber/myComplaints';
 import AcceptedComplaints from './Plumber/acceptedComplaints';
-import SubmitFeedback from './SubmitFeedback';
 import Page2 from './Pages/page2';
 import Page3 from './Pages/page3';
 import Page4 from './Pages/page4';
@@ -18,8 +22,10 @@ import Page5 from './Pages/page5';
 import Page6 from './Pages/page6';
 import Page7 from './Pages/page7';
 
+import ManagerDashboard from './Manager/dashboard';
 import AllComplaints from './Manager/allComplaints';
 import AssignComplaints from './Manager/assignComplaints';
+
 
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -35,6 +41,7 @@ function App(props) {
   const [userFirstName, setUserFirstName] = useState("");
   const [userLastName, setUserLastName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [jobCardDetails, setJobCardDetails] = useState();
 
   // ................................... customer side ..................................................
 
@@ -74,6 +81,10 @@ function App(props) {
 
   // to submit feedback for a complaintID
   const [complaintID, setComplaintID] = useState('');
+
+  // assigning complaint to plumber   
+  const [complaintToAssign, setComplaintToAssign] = useState("");
+
 
 
   function setUserDetails(username, contact, firstName, lastName, email){
@@ -120,6 +131,10 @@ function App(props) {
     setAllPlumbersDataArray(allPlumberData);
   }
 
+  function setJobCard(jobCardDetails){
+    setJobCardDetails(jobCardDetails);
+  }
+
   // ************** Not needed *****************
   // function setComplaintHistoryIDs(complaintID){
   //   // console.log("Before: ", userComplaintsHistoryIDs);
@@ -136,7 +151,17 @@ function App(props) {
     setUserFirstName("");
     setUserLastName("");
     setUserEmail("");
-    navigator('/', true);
+    navigator('home-screen-page', true);
+  }
+
+
+  function demoPage(){
+    setUserName("");
+    setUserContact(0);
+    setUserFirstName("");
+    setUserLastName("");
+    setUserEmail("");
+    navigator('/', false);
   }
 
   function navigator(position, replace) {
@@ -146,33 +171,35 @@ function App(props) {
   return (
     <>
     <Routes>
-      <Route exact path="/" element={<HomeScreenPage navigator={navigator}/>}></Route>
+      <Route exact path="/" element={<TestDemo navigator={navigator}/>}></Route>
+      <Route exact path="home-screen-page" element={<HomeScreenPage navigator={navigator}/>}></Route>
       <Route exact path="sign-up-page" element={<SignUp setUserDetails={setUserDetails} navigator={navigator}/>}></Route>
       <Route exact path="login-page" element={<SignIn setUserDetails={setUserDetails} navigator={navigator}/>}></Route>
-      <Route exact path="register-new-role" element={<RegisterNewRole setUserDetails={setUserDetails} navigator={navigator}/>}></Route>
 
      {/*.......... Customer ..........*/}
-      <Route exact path="customer-dashboard" element={<CustomerDashboard logOut={logOut} setComplaintsHistory={setComplaintsHistory}  userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="raise-complaint" element={<RaiseComplaint logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="view-complaint-history" element={<ViewComplaintHistory logOut={logOut} setComplaintID={setComplaintID} userComplaintsHistory={userComplaintsHistory} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="submit-feedback" element={<SubmitFeedback logOut={logOut} complaintID={complaintID} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="customer-dashboard" element={<CustomerDashboard demoPage={demoPage} logOut={logOut} setComplaintsHistory={setComplaintsHistory}  userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="raise-complaint" element={<RaiseComplaint demoPage={demoPage} logOut={logOut} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="view-complaint-history" element={<ViewComplaintHistory demoPage={demoPage} logOut={logOut} setComplaintID={setComplaintID} userComplaintsHistory={userComplaintsHistory} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="submit-feedback" element={<SubmitFeedback demoPage={demoPage} logOut={logOut} complaintID={complaintID} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
 
 
       {/*.......... Plumber .........*/}
-      <Route exact path="plumber-dashboard" element={<PlumberDashboard logOut={logOut} customers={customerUsername} setAcceptedComplaints={setAcceptedComplaints} setAssignedComplaints={setAssignedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="my-complaints" element={<MyComplaints logOut={logOut} customers={customerUsername} assignedComplaintIDs={plumberAssignedComplaintIDs} assignedComplaints={plumberAssignedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="view-accepted-complaints" element={<AcceptedComplaints logOut={logOut} setComplaintIndex={setComplaintIndex} setPageComplaintStatus={setPageComplaintStatus} setPageComplaintID={setPageComplaintID} setComplaintsStatusArray={setComplaintsStatusArray} complaintsStatus={complaintsStatus} customers={customerUsername} acceptedComplaintIDs={plumberAccepteddComplaintIDs} acceptedComplaints={plumberAcceptedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="page-2" element={<Page2 logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="page-3" element={<Page3 logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="page-4" element={<Page4 logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="page-5" element={<Page5 logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="page-6" element={<Page6 logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="page-7" element={<Page7 logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      
+      <Route exact path="plumber-dashboard" element={<PlumberDashboard demoPage={demoPage} logOut={logOut} customers={customerUsername} setAcceptedComplaints={setAcceptedComplaints} setAssignedComplaints={setAssignedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="my-complaints" element={<MyComplaints demoPage={demoPage} logOut={logOut} customers={customerUsername} assignedComplaintIDs={plumberAssignedComplaintIDs} assignedComplaints={plumberAssignedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="view-accepted-complaints" element={<AcceptedComplaints demoPage={demoPage} logOut={logOut} setComplaintIndex={setComplaintIndex} setPageComplaintStatus={setPageComplaintStatus} setPageComplaintID={setPageComplaintID} setComplaintsStatusArray={setComplaintsStatusArray} complaintsStatus={complaintsStatus} customers={customerUsername} acceptedComplaintIDs={plumberAccepteddComplaintIDs} acceptedComplaints={plumberAcceptedComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="page-2" element={<Page2 demoPage={demoPage} logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="page-3" element={<Page3 demoPage={demoPage} logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="page-4" element={<Page4 demoPage={demoPage} logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator} setJobCard={setJobCard} jobCard={jobCardDetails}/>}></Route>
+      <Route exact path="page-5" element={<Page5 demoPage={demoPage} logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="page-6" element={<Page6 demoPage={demoPage} logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="page-7" element={<Page7 demoPage={demoPage} logOut={logOut} index={index} pageComplaintID={pageComplaintID} pageComplaintStatus={pageComplaintStatus} setPageComplaintStatus={setPageComplaintStatus} setComplaintsStatusArray={setComplaintsStatusArray} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator} jobCard={jobCardDetails}/>}></Route>
+      <Route exact path="payment-page" element={<Payment demoPage={demoPage} logOut={logOut} complaintID={complaintID} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator} setJobCard={setJobCard} jobCard={jobCardDetails}/>}></Route>
+      <Route exact path="make-payment" element={<MakePayment demoPage={demoPage} logOut={logOut} complaintID={complaintID} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator} jobCard={jobCardDetails}/>}></Route>
+
       {/* Manager */}
-      <Route exact path="manager-dashboard" element={<ManagerDashboard logOut={logOut} setAllPlumbers={setAllPlumbers} setAllComplaints={setAllComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="all-complaints" element={<AllComplaints logOut={logOut} allComplaintIDs={allComplaintIDs} allComplaintData={allComplaintData} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
-      <Route exact path="assign-complaints" element={<AssignComplaints logOut={logOut} allPlumberIDs={allPlumberIDs} allPlumberData={allPlumberData} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="manager-dashboard" element={<ManagerDashboard demoPage={demoPage} logOut={logOut} setAllPlumbers={setAllPlumbers} setAllComplaints={setAllComplaints} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="all-complaints" element={<AllComplaints setComplaintToAssign={setComplaintToAssign} demoPage={demoPage} logOut={logOut} allComplaintIDs={allComplaintIDs} allComplaintData={allComplaintData} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
+      <Route exact path="assign-complaints" element={<AssignComplaints complaintToAssign={complaintToAssign} demoPage={demoPage} logOut={logOut} allPlumberIDs={allPlumberIDs} allPlumberData={allPlumberData} userDetails={{userName, userContact, userFirstName, userLastName, userEmail}} navigator={navigator}/>}></Route>
     </Routes>
     </>
   );

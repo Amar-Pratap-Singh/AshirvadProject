@@ -4,7 +4,7 @@ import HistoryCard from '../HistoryCard';
 
 function ViewComplaintHistory(props){
 
-    return (
+    return ( 
         <div>
             <Navbar props={props} />
             
@@ -14,12 +14,12 @@ function ViewComplaintHistory(props){
                 {props.userComplaintsHistory.map((complaintData, index) => (
                     <div>
                         <HistoryCard 
-                        index={index}
-                        id={complaintData.id} 
-                        complaint={complaintData.complaint}
-                        status={complaintData.status}
-                        navigator={props.navigator}
-                        setComplaintID={props.setComplaintID}
+                            index={index}
+                            id={complaintData.id} 
+                            complaint={complaintData.complaint}
+                            status={complaintData.status}
+                            navigator={props.navigator}
+                            setComplaintID={props.setComplaintID}
                         />
                         <br></br>
                     </div>

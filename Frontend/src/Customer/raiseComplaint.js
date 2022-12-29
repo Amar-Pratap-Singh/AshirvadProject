@@ -14,6 +14,17 @@ function RaiseComplaint(props){
             const username = document.getElementById("CustomerUsername").value;
             const Contact = document.getElementById("CustomerContact").value;
             const Complaint = document.getElementById("CustomerComplaint").value;
+            const ComplaintTypes = ["BasinSink", "Grouting", "BathFitting", "DrainagePipe", "Toilet", "TapMixer", "WaterTank", "Motor", "WaterConnection"]
+            
+            const CustomerComplaintCategory = []
+
+            ComplaintTypes.forEach((complaintType) => {
+                if (document.getElementById(complaintType).checked){
+                    CustomerComplaintCategory.push(complaintType);
+                }
+            })
+
+            console.log(CustomerComplaintCategory);
 
             const result = await fetch("http://localhost:8080/RaiseComplaint", {
                 method: "POST",
@@ -23,7 +34,8 @@ function RaiseComplaint(props){
                 body: JSON.stringify({
                     username,
                     Contact,
-                    Complaint
+                    Complaint,
+                    CustomerComplaintCategory
                 }),    
             }).then((res) => res.json());
 
@@ -36,7 +48,7 @@ function RaiseComplaint(props){
     return (
         <div>
             <Navbar props={props}/>
-
+            
             <div class="center_div">
                 <h1>Raise a Complaint</h1>
                 <form id="complaint-form">
@@ -54,8 +66,43 @@ function RaiseComplaint(props){
                         </div>
                     </div>
 
+
                     <div class="form-group">
-                        <label for="CustomerComplaint">Raise Your Issue</label>
+                        <label>Select Complaint Type(s)</label>
+                        <div class="ComplaintCategories col-8">
+                            
+                            <input type="checkbox" id="BasinSink" value="BasinSink" />
+                            <label for="BasinSink"> Basin & Sink </label><br></br>
+                            
+                            <input type="checkbox" id="Grouting" value="Grouting" />
+                            <label for="Grouting"> Grouting </label><br></br>
+                            
+                            <input type="checkbox" id="BathFitting" value="BathFitting" />
+                            <label for="BathFitting"> Bath fitting </label><br></br>
+
+                            <input type="checkbox" id="DrainagePipe" value="DrainagePipe" />
+                            <label for="DrainagePipe"> Drainage Pipe </label><br></br>
+
+                            <input type="checkbox" id="Toilet" value="Toilet" />
+                            <label for="Toilet"> Toilet </label><br></br>
+
+                            <input type="checkbox" id="TapMixer" value="TapMixer" />
+                            <label for="TapMixer"> Tap & Mixer </label><br></br>
+
+                            <input type="checkbox" id="WaterTank" value="WaterTank" />
+                            <label for="WaterTank"> Water Tank </label><br></br>
+
+                            <input type="checkbox" id="Motor" value="Motor" />
+                            <label for="Motor"> Motor </label><br></br>
+
+                            <input type="checkbox" id="WaterConnection" value="WaterConnection" />
+                            <label for="WaterConnection"> Water Connection </label><br></br>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="CustomerComplaint">Raise Your Concern</label>
                         <div class="col-8">
                             <textarea class="form-control rounded-0" id="CustomerComplaint" rows="5"></textarea>
                         </div>

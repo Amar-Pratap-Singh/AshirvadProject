@@ -20,8 +20,21 @@ function Card(props){
             props.navigator("page-5", true);
         
         else if (props.status === "executed")
+            props.navigator("page-7", true);
+        
+        else if (props.status === "paid")
             props.navigator("page-6", true);
+        
     }
+
+    // function checkInvoice(){
+    //     // const form = document.getElementById("");
+    //     // form.addEventListener('submit', login);
+
+    //     // async function login(event){
+    //         // event.preventDefault();
+    //     // }
+    // }
         
 
     return (
@@ -31,7 +44,11 @@ function Card(props){
                 <h5 class="card-title">Raised By: {props.customerUsername}</h5>
                 <h5 class="card-title">Status: {props.status}</h5>
                 <p class="card-text">{props.complaint}</p>
-                <button onClick={nextPage} class="btn btn-primary">Update Status</button>
+                {/* <button onClick={nextPage} class="btn btn-primary">Update Status</button> */}
+                {(props.status !== "completed" && props.status !== "cancelled") ?
+                    <button onClick={nextPage} class="btn btn-primary">Update Status</button> :
+                    <button class="btn btn-secondary" disabled>Complaint Closed</button>
+                }
             </div>
         </div>
 

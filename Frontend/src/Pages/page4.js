@@ -34,17 +34,41 @@ function Page4(props){
             }).then((res) => res.json());
 
             props.setPageComplaintStatus(result.updatedStatus);
-            
             props.setComplaintsStatusArray(result.complaintStatusArray);
-
+            
             props.navigator("page-5", true);
         }
     }
 
-
+    
     function handleDoneButtonClick(){
-        // go to feedback (fill job cart)
-        props.navigator("page-7", true);
+        const form2 = document.getElementById("page");
+        form2.addEventListener('submit', fillJobCard);
+        
+        async function fillJobCard(event){
+            event.preventDefault();
+
+            const complaintID = props.pageComplaintID;
+            // const currentStatus = props.pageComplaintStatus;
+            // const plumberUsername = props.userDetails.userName;
+            // const temp = "";
+            
+            const result = await fetch("http://localhost:8080/FillJobCard", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    complaintID
+                })
+            }).then((res) => res.json());
+
+            // console.log(result.jobCardDetails.plumberUsername);
+
+            props.setJobCard(result.jobCardDetails);
+            // console.log(props.jobCard);
+            props.navigator("page-7", true);
+        }
     }
 
 

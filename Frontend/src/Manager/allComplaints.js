@@ -17,7 +17,10 @@ function AllComplaints(props){
                         status={doc.status} 
                         complaintID={props.allComplaintIDs[index]} 
                         customerUsername={doc.username} 
-                        complaint={doc.complaint}/>
+                        complaint={doc.complaint}
+                        setComplaintToAssign={props.setComplaintToAssign}
+                        navigator={props.navigator}
+                        />
                         <br></br>
                     </div>
                 ))}
