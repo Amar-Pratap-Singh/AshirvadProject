@@ -10,15 +10,15 @@ const credentials = require("./DataBase/key.json");
 
 admin.initializeApp({
     credential: admin.credential.cert(credentials),
-    databaseURL: "https://ashirvad-2.firebaseio.com" 
+    databaseURL: "https://ashirvad-2.firebaseio.com"
 });
 
 app.use(express.json());
-app.use(express.urlencoded({extended : true}));
+app.use(express.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json())
 app.set('/src', path.join(__dirname, '/src'))
 
@@ -30,20 +30,20 @@ app.use(
     cors({
         origin: "*",
     })
-    );
+);
 
 
-    app.use(function (req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
-        res.header("Access-Control-Allow-Headers", "Content-Type");
-        res.setHeader("Access-Control-Allow-Credentials", true);
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
     next();
 });
 
 
 // Server as a separate module
-app.get('/', async(req, res)=>{
+app.get('/', async (req, res) => {
     res.send("You are testing Server Side");
 });
 
@@ -51,13 +51,159 @@ app.get('/', async(req, res)=>{
 const db = admin.firestore();
 
 
-// SIGN UP
-app.post('/SignUp', async (req, res) =>{
+// Set Up database for testing
+app.post('/SetUpDatabase', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
+
+        const customer1 = {
+            complaints: [],
+            contact: "9858973121",
+            password: "customer",
+            username: "Customer1"
+        }
+
+        const customer2 = {
+            complaints: [],
+            contact: "9881434220",
+            password: "customer",
+            username: "Customer2"
+        }
+
+        const plumber1 = {
+            acceptedComplaints: [],
+            complaints: [],
+            password: "plumber",
+            specialisations: ["BasinSink", "Grouting", "BathFitting", "Motor"],
+            username: "Plumber1"
+        }
+
+        const plumber2 = {
+            acceptedComplaints: [],
+            complaints: [],
+            password: "plumber",
+            specialisations: ["DrainagePipe", "Toilet", "TapMixer", "WaterTank", "WaterConnection"],
+            username: "Plumber2"
+        }
+
+        const plumber3 = {
+            acceptedComplaints: [],
+            complaints: [],
+            password: "plumber",
+            specialisations: ["BathFitting", "Toilet", "DrainagePipe", "WaterTank"],
+            username: "Plumber3"
+        }
+
+        const manager1 = {
+            password: "manager",
+            username: "Manager1"
+        }
+
+        const user1 = {
+            firstName: 'Customer',
+            role: ['Customer', '', ''],
+            password: 'customer',
+            username: 'Customer1',
+            lastName: '1',
+            contact: '123808786',
+            email: 'Customer1@gmail.com'
+        }
+
+        const user2 = {
+            role: ['Customer', '', ''],
+            firstName: 'Customer',
+            contact: '12930977986',
+            email: 'Customer2@gmail.com',
+            password: 'customer',
+            username: 'Customer2',
+            lastName: '2'
+        }
+
+        const user3 = {
+            password: 'plumber',
+            username: 'Plumber1',
+            lastName: '1',
+            firstName: 'Plumber',
+            contact: '12873998687',
+            email: 'Plumber1@gmail.com',
+            role: ['', 'Plumber', '']
+        }
+
+        const user4 = {
+            username: 'Plumber2',
+            lastName: '2',
+            password: 'plumber',
+            email: 'Plumber2@gmail.com',
+            firstName: 'Plumber',
+            contact: '12938097',
+            role: ['', 'Plumber', '']
+        }
+
+        const user5 = {
+            username: 'Plumber3',
+            lastName: '3',
+            role: ['', 'Plumber', ''],
+            contact: '1293968547',
+            email: 'Plumber3@gmail.com',
+            firstName: 'Plumber',
+            password: 'plumber'
+        }
+        const user6 = {
+            contact: '9123799655',
+            role: ['', '', 'Manager'],
+            firstName: 'Manager',
+            password: 'manager',
+            email: 'Manager1@gmail.com',
+            username: 'Manager1',
+            lastName: '1'
+        }
+
+        // Delete Complaints Collection
+        const complaints = await db.collection("Complaints").get();
+        complaints.forEach(doc => {
+            doc.ref.delete();
+        });
+
+        const response1 = await db.collection("RegisteredUsers").doc("Customer1").set(user1);
+        const response2 = await db.collection("RegisteredUsers").doc("Customer2").set(user2);
+        const response3 = await db.collection("RegisteredUsers").doc("Plumber1").set(user3);
+        const response4 = await db.collection("RegisteredUsers").doc("Plumber2").set(user4);
+        const response5 = await db.collection("RegisteredUsers").doc("Plumber3").set(user5);
+        const response6 = await db.collection("RegisteredUsers").doc("Manager1").set(user6);
+
+        const response7 = await db.collection("RegisteredCustomer").doc("Customer1").set(customer1);
+        const response8 = await db.collection("RegisteredCustomer").doc("Customer2").set(customer2);
+
+        const response9 = await db.collection("RegisteredPlumber").doc("Plumber1").set(plumber1);
+        const response10 = await db.collection("RegisteredPlumber").doc("Plumber2").set(plumber2);
+        const response11 = await db.collection("RegisteredPlumber").doc("Plumber3").set(plumber3);
+        
+        const response12 = await db.collection("RegisteredManager").doc("Manager1").set(manager1);
+
+
+        if (response1 && response2 && response3 && response4 && response5 && response6 && response7 && response8 && response9 && response10 && response11 && response12){
+            res.send({status: "ok"});
+        }
+
+    }
+    catch (error) {
+        res.send({ status: error });
+        return;
+    }
+});
+
+
+
+// SIGN UP
+app.post('/SignUp', async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    try {
         const id = req.body.username;
         const userJson = {
             firstName: req.body.FirstName,
@@ -95,89 +241,89 @@ app.post('/SignUp', async (req, res) =>{
 
         if (user.exists) {
             console.log('Username already taken!');
-        } 
+        }
         else {
             let response = await db.collection("RegisteredUsers").doc(id).set(userJson);
             let verify = 1;
-            
-            for (let roleIndex = 0; roleIndex < 3 ; roleIndex++){
-                if (userJson.role[roleIndex] !== ""){
 
-                    if (userJson.role[roleIndex] === "Customer"){
+            for (let roleIndex = 0; roleIndex < 3; roleIndex++) {
+                if (userJson.role[roleIndex] !== "") {
+
+                    if (userJson.role[roleIndex] === "Customer") {
                         response = await db.collection("RegisteredCustomer").doc(id).set(customerCredsJson);
                         if (!response)
                             verify = 0;
                     }
 
-                    else if (userJson.role[roleIndex] === "Plumber"){
+                    else if (userJson.role[roleIndex] === "Plumber") {
                         response = await db.collection("RegisteredPlumber").doc(id).set(plumberCredsJson);
                         if (!response)
                             verify = 0;
                     }
 
-                    else if (userJson.role[roleIndex] === "Manager"){
+                    else if (userJson.role[roleIndex] === "Manager") {
                         response = await db.collection("RegisteredManager").doc(id).set(managerCredsJson);
                         if (!response)
                             verify = 0;
                     }
                 }
             }
-    
-            if(verify) {
-                res.json({ status: "ok" }) 
+
+            if (verify) {
+                res.json({ status: "ok" })
             }
             else {
                 res.json({ status: "error" })
             }
         }
     }
-    catch(error){
-        res.send({status: error});
+    catch (error) {
+        res.send({ status: error });
         return;
     }
 })
 
 
 // SIGN IN
-app.post('/SignIn', async (req, res) =>{
+app.post('/SignIn', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const id = req.body.username;
         const password = req.body.Password;
         const role = req.body.Role;
-      
 
-        const user = await db.collection('Registered'+role).doc(id).get();
+
+        const user = await db.collection('Registered' + role).doc(id).get();
         const registeredUsers = await db.collection('RegisteredUsers').doc(id).get();
-         
+
         let response = 0;
 
         if (!user.exists) {
             console.log('User Not Registered!');
-        } 
+        }
         else {
             userDataJson = user.data();
-            if (userDataJson.password === password){
+            if (userDataJson.password === password) {
                 response = 1;
                 console.log("success!");
             }
-            else{
+            else {
                 console.log("Incorrect password!");
             }
         }
 
-        if(response) {
-            res.json({ status: "ok", userData: registeredUsers.data()}) 
+        if (response) {
+            res.json({ status: "ok", userData: registeredUsers.data() })
         }
         else {
             res.json({ status: "error" })
         }
     }
-    catch(error){
-        res.send({status: error});
+    catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -194,7 +340,7 @@ app.post('/SignIn', async (req, res) =>{
 //         const password = req.body.Password;
 //         const role = req.body.Role;
 
-        
+
 //         const user = await db.collection('RegisteredUsers').doc(id).get();
 //         let verify = 1;
 //         let userRoles = user.data().role;
@@ -203,23 +349,23 @@ app.post('/SignIn', async (req, res) =>{
 //         if (!user.exists) {
 //             console.log('User Not Registered!');
 //         } 
-        
+
 //         else {
-       
+
 //             const customerCredsJson = {
 //                 username: req.body.username,
 //                 password: req.body.Password,
 //                 contact: user.data().contact,
 //                 complaints: []
 //             };
-    
+
 //             const plumberCredsJson = {
 //                 username: req.body.username,
 //                 password: req.body.Password,
 //                 complaints: [],
 //                 acceptedComplaints: []
 //             };
-    
+
 //             const managerCredsJson = {
 //                 username: req.body.username,
 //                 password: req.body.Password,
@@ -234,26 +380,26 @@ app.post('/SignIn', async (req, res) =>{
 //                 for (let roleIndex = 0; roleIndex < 3 ; roleIndex++){
 //                     if (role[roleIndex] !== ""){
 //                         userRoles[roleIndex] = role[roleIndex];
-                        
+
 //                         if (role[roleIndex] === "Customer"){
 //                             response = await db.collection("RegisteredCustomer").doc(id).set(customerCredsJson);
 //                             if (!response)
 //                                 verify = 0;
 //                         }
-                        
+
 //                         else if (role[roleIndex] === "Plumber"){
 //                             response = await db.collection("RegisteredPlumber").doc(id).set(plumberCredsJson);
 //                             if (!response)
 //                                 verify = 0;
 //                         }
-    
+
 //                         else if (role[roleIndex] === "Manager"){
 //                             response = await db.collection("RegisteredManager").doc(id).set(managerCredsJson);
 //                             if (!response)
 //                                 verify = 0;
 //                         }
 //                     }
-                
+
 //                 }
 //             }
 //             else{
@@ -282,13 +428,13 @@ app.post('/SignIn', async (req, res) =>{
 
 
 // Raise Complaints
-app.post('/RaiseComplaint', async (req, res) =>{
-    
+app.post('/RaiseComplaint', async (req, res) => {
+
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const id = db.collection("Complaints").doc().id;
         const userJson = {
             username: req.body.username,
@@ -303,43 +449,43 @@ app.post('/RaiseComplaint', async (req, res) =>{
             plumberUsername: "",
             status: "raised"
         };
-        
+
         const response1 = db.collection("Complaints").doc(id).set(userJson);
         console.log("Id of the newest complaint: ", id);
 
 
         const registeredCustomer = await db.collection('RegisteredCustomer').doc(req.body.username).get();
-        let complaints = registeredCustomer.data().complaints; 
+        let complaints = registeredCustomer.data().complaints;
         complaints.push(id);
         // console.log("Complaints: ", complaints);
 
-        
+
         const response2 = await db.collection('RegisteredCustomer').doc(req.body.username).set({
             complaints: complaints,
             contact: req.body.Contact
         }, { merge: true });
-        
 
-        if(response1 && response2) {
-            res.json({ status: "ok"}) 
+
+        if (response1 && response2) {
+            res.json({ status: "ok" })
         }
         else {
             res.json({ status: "error" })
         }
-    }catch(error){
-      res.send({status: error});
+    } catch (error) {
+        res.send({ status: error });
     }
 })
 
 
 
 // View Complaint History
-app.post('/ViewComplaintHistory', async(req, res)=>{
+app.post('/ViewComplaintHistory', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const username = req.body.username;
         const registeredCustomer = await db.collection('RegisteredCustomer').doc(username).get();
 
@@ -348,75 +494,79 @@ app.post('/ViewComplaintHistory', async(req, res)=>{
         const complaintArray = [];
         var complaintRecord;
         var complaintData;
-        
-        for (const ids of customerComplaints.values()){
+
+        for (const ids of customerComplaints.values()) {
             complaintRecord = await db.collection('Complaints').doc(ids).get();
             complaintData = complaintRecord.data();
 
             complaintData.id = ids;
             complaintArray.push(complaintData);
         }
-        
-        res.json({status: "ok", complaintArray: complaintArray});
+
+        res.json({ status: "ok", complaintArray: complaintArray });
     }
-    catch(error){
-        res.send({status: error});
+    catch (error) {
+        res.send({ status: error });
         return;
     }
 })
 
 
 // Cancel Complaint
-app.post('/CancelComplaint',  async(req, res)=>{
+app.post('/CancelComplaint', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const complaintID = req.body.complaintID;
 
         const response = await db.collection("Complaints").doc(complaintID).set({
             status: "cancelled"
-        }, {merge: true});
+        }, { merge: true });
 
-        if (response){
-            res.json({status: "ok"});
+        if (response) {
+            res.json({ status: "ok" });
         }
-        else{
-            res.json({status: "error"});
+        else {
+            res.json({ status: "error" });
         }
     }
-    catch(error){
-        res.send({status: error});
+    catch (error) {
+        res.send({ status: error });
         return;
     }
 })
 
 
 // Submit Feedback
-app.post('/SubmitFeedback', async(req, res)=>{
+app.post('/SubmitFeedback', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const complaintID = req.body.complaintID;
         const feedback = req.body.feedback;
+        const rating = req.body.rating;
+
+        console.log(rating);
 
         const response = await db.collection("Complaints").doc(complaintID).set({
             status: "completed",
-            feedback: feedback
-        }, {merge: true});
-
-        if (response){
-            res.json({status: "ok"});
+            feedback: feedback,
+            rating: rating
+        }, { merge: true });
+        
+        if (response) {
+            res.json({ status: "ok" });
         }
-        else{
-            res.json({status: "error"});
+        else {
+            res.json({ status: "error" });
         }
     }
-    catch(error){
-        res.send({status: error});
+    catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -425,37 +575,37 @@ app.post('/SubmitFeedback', async(req, res)=>{
 
 
 // Make Payment
-app.post('/MakePayment', async(req, res)=>{
+app.post('/MakePayment', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const complaintID = req.body.complaintID;
         const amountToPay = req.body.amountToPay;
 
         // var response = 0;
         // const complaintData = await db.collection("Complaints").doc(complaintID).get();
         // Considering 10% GST
-       
+
         var response = await db.collection("Complaints").doc(complaintID).set({
             paid: true,
             status: "paid"
-        }, {merge: true});
+        }, { merge: true });
 
         // else{
-            // alert("Please pay the specified amount!");
+        // alert("Please pay the specified amount!");
         // }
 
-        if (response){
-            res.json({status: "ok"});
+        if (response) {
+            res.json({ status: "ok" });
         }
-        else{
-            res.json({status: "error"});
+        else {
+            res.json({ status: "error" });
         }
     }
-    catch(error){
-        res.send({status: error});
+    catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -463,67 +613,67 @@ app.post('/MakePayment', async(req, res)=>{
 
 
 // ################################################################## PLUMBER ##############################################################################
-app.post('/MyComplaints', async(req, res)=>{
+app.post('/MyComplaints', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const username = req.body.username;
 
         const registeredPlumber = await db.collection("RegisteredPlumber").doc(username).get();
         const assignedComplaintIDs = registeredPlumber.data().complaints;
-        
+
         const assignedComplaints = [];
         const customers = [];
         // const complaintsStatus = [];
         var complaintRecord;
-        
+
         // console.log("Button is clicked")
 
-        for (const ids of assignedComplaintIDs.values()){
+        for (const ids of assignedComplaintIDs.values()) {
             complaintRecord = await db.collection('Complaints').doc(ids).get();
             assignedComplaints.push(complaintRecord.data().complaint);
             customers.push(complaintRecord.data().username);
             // complaintsStatus.push(complaintRecord.data().status);
         }
 
-        res.json({status: "ok", customerUsernames: customers, assignedComplaintIDs: assignedComplaintIDs, assignedComplaints: assignedComplaints});
+        res.json({ status: "ok", customerUsernames: customers, assignedComplaintIDs: assignedComplaintIDs, assignedComplaints: assignedComplaints });
 
-    }catch(error){
-        res.send({status: error});
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
 
 
-app.post('/AcceptComplaint', async(req, res)=>{
+app.post('/AcceptComplaint', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const complaintID = req.body.complaintID;
         const plumberUsername = req.body.plumberUsername;
         const updatedComplaintIDs = req.body.updatedComplaintIDs;
-        
+
         // Update the status of the complaint
         const complaintData = await db.collection("Complaints").doc(complaintID).get();
         let response1 = 0;
 
-        if (complaintData.data().status === "assigned"){
+        if (complaintData.data().status === "assigned") {
             response1 = await db.collection("Complaints").doc(complaintID).set({
                 plumberUsername: plumberUsername,
                 status: "accepted"
-            }, {merge: true});
+            }, { merge: true });
         }
 
 
         const plumberData = await db.collection('RegisteredPlumber').doc(plumberUsername).get();
-        
-        let acceptedComplaints = plumberData.data().acceptedComplaints; 
+
+        let acceptedComplaints = plumberData.data().acceptedComplaints;
         acceptedComplaints.push(complaintID);
-        
+
         console.log("acceptedCOmplaints: ", acceptedComplaints);
         console.log("updatedComplaints: ", updatedComplaintIDs);
 
@@ -532,27 +682,27 @@ app.post('/AcceptComplaint', async(req, res)=>{
             complaints: updatedComplaintIDs
         }, { merge: true });
 
-        if(response1 && response2) {
-            res.json({ status: "ok"}) 
+        if (response1 && response2) {
+            res.json({ status: "ok" })
         }
         else {
             res.json({ status: "error" })
         }
 
-    }catch(error){
-        res.send({status: error});
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
 
 
 
-app.post('/ViewAcceptedComplaints', async(req, res)=>{
+app.post('/ViewAcceptedComplaints', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
 
         const username = req.body.username;
 
@@ -560,25 +710,25 @@ app.post('/ViewAcceptedComplaints', async(req, res)=>{
 
         // console.log(plumberData.data());
         const acceptedComplaintIDs = plumberData.data().acceptedComplaints;
-        
+
         const acceptedComplaintArray = [];
         const customers = [];
         const complaintsStatus = [];
         var complaintRecord;
-        
-        for (const ids of acceptedComplaintIDs.values()){
+
+        for (const ids of acceptedComplaintIDs.values()) {
             complaintRecord = await db.collection('Complaints').doc(ids).get();
             acceptedComplaintArray.push(complaintRecord.data().complaint);
             customers.push(complaintRecord.data().username);
             complaintsStatus.push(complaintRecord.data().status);
         }
-        
-        console.log("Accepted Complaint: ", acceptedComplaintArray);
-        res.json({status: "ok", complaintsStatus: complaintsStatus, acceptedComplaintIDs: acceptedComplaintIDs, acceptedComplaintArray: acceptedComplaintArray, customerUsernames: customers});
-        
 
-    }catch(error){
-        res.send({status: error});
+        console.log("Accepted Complaint: ", acceptedComplaintArray);
+        res.json({ status: "ok", complaintsStatus: complaintsStatus, acceptedComplaintIDs: acceptedComplaintIDs, acceptedComplaintArray: acceptedComplaintArray, customerUsernames: customers });
+
+
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -586,12 +736,12 @@ app.post('/ViewAcceptedComplaints', async(req, res)=>{
 
 
 
-app.post('/NextPage', async(req, res)=>{
+app.post('/NextPage', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
 
         const complaintID = req.body.complaintID;
         const currentStatus = req.body.currentStatus;
@@ -603,14 +753,14 @@ app.post('/NextPage', async(req, res)=>{
 
         let response1 = 0;
         let newStatus = "";
-        
+
         // console.log("NEW STATUS: ", newStatus);
-        if (currentStatus === complaintStatus){
+        if (currentStatus === complaintStatus) {
             console.log("Status are matched! " + currentStatus);
-            
+
             if (currentStatus === "accepted")
                 newStatus = "visited";
-                
+
             else if (currentStatus === "visited")
                 newStatus = "tobeExecuted";
 
@@ -622,31 +772,31 @@ app.post('/NextPage', async(req, res)=>{
 
             else if (currentStatus === "tobeExecuted" && temp === "submit")
                 newStatus = "executed";
-        
+
             response1 = await db.collection("Complaints").doc(complaintID).set({
                 status: newStatus
-            }, {merge: true});
+            }, { merge: true });
         }
-        
+
         let complaintRecord;
         const plumberData = await db.collection("RegisteredPlumber").doc(plumberUsername).get();
         let acceptedComplaintIDs = plumberData.data().acceptedComplaints;
         let complaintStatusArray = [];
 
-        for (const ids of acceptedComplaintIDs.values()){
+        for (const ids of acceptedComplaintIDs.values()) {
             complaintRecord = await db.collection("Complaints").doc(ids).get();
             complaintStatusArray.push(complaintRecord.data().status);
-        } 
-
-        if (response1){
-            res.send({status: "ok", updatedStatus: newStatus, complaintStatusArray: complaintStatusArray});
-        }
-        else{
-            res.send({status: "error"});
         }
 
-    }catch(error){
-        res.send({status: error});
+        if (response1) {
+            res.send({ status: "ok", updatedStatus: newStatus, complaintStatusArray: complaintStatusArray });
+        }
+        else {
+            res.send({ status: "error" });
+        }
+
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -654,33 +804,33 @@ app.post('/NextPage', async(req, res)=>{
 
 
 
-app.post('/FillJobCard', async(req, res)=>{
+app.post('/FillJobCard', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const complaintID = req.body.complaintID;
         const complaintData = await db.collection("Complaints").doc(complaintID).get();
         const jobCardDetails = complaintData.data();
 
         console.log(jobCardDetails);
 
-        res.send({status: "ok", jobCardDetails: jobCardDetails});
-    }catch(error){
-        res.send({status: error});
+        res.send({ status: "ok", jobCardDetails: jobCardDetails });
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
 
 
 
-app.post('/Page2', async(req, res)=>{
+app.post('/Page2', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const complaintID = req.body.complaintID;
         const currentStatus = req.body.currentStatus;
         const plumberUsername = req.body.plumberUsername;
@@ -690,34 +840,34 @@ app.post('/Page2', async(req, res)=>{
         const complaintStatus = complaintData.data().status;
 
         let newStatus = "";
-        
-        if (currentStatus === complaintStatus){
+
+        if (currentStatus === complaintStatus) {
             newStatus = "visited";
         }
 
         let response1 = await db.collection("Complaints").doc(complaintID).set({
             status: newStatus
-        }, {merge: true});
-        
+        }, { merge: true });
+
         let complaintRecord;
         const plumberData = await db.collection("RegisteredPlumber").doc(plumberUsername).get();
         let acceptedComplaintIDs = plumberData.data().acceptedComplaints;
         let complaintStatusArray = [];
 
-        for (const ids of acceptedComplaintIDs.values()){
+        for (const ids of acceptedComplaintIDs.values()) {
             complaintRecord = await db.collection("Complaints").doc(ids).get();
             complaintStatusArray.push(complaintRecord.data().status);
-        } 
-
-        if (response1){
-            res.send({status: "ok", updatedStatus: newStatus, complaintStatusArray: complaintStatusArray});
-        }
-        else{
-            res.send({status: "error"});
         }
 
-    }catch(error){
-        res.send({status: error});
+        if (response1) {
+            res.send({ status: "ok", updatedStatus: newStatus, complaintStatusArray: complaintStatusArray });
+        }
+        else {
+            res.send({ status: "error" });
+        }
+
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -725,12 +875,12 @@ app.post('/Page2', async(req, res)=>{
 
 
 
-app.post('/Page3', async(req, res)=>{
+app.post('/Page3', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
 
         const complaintID = req.body.complaintID;
         const currentStatus = req.body.currentStatus;
@@ -741,11 +891,11 @@ app.post('/Page3', async(req, res)=>{
 
         const complaintData = await db.collection("Complaints").doc(complaintID).get();
         const complaintStatus = complaintData.data().status;
-        
+
         console.log("BackEND: ", currentStatus);
 
         var newStatus = "";
-        if (currentStatus === complaintStatus){
+        if (currentStatus === complaintStatus) {
             newStatus = "tobeExecuted";
         }
 
@@ -754,7 +904,7 @@ app.post('/Page3', async(req, res)=>{
             quotationAmount: billingAmount,
             billAmount: billingAmount,
             status: newStatus
-        }, {merge: true});
+        }, { merge: true });
 
 
         let complaintRecord;
@@ -762,20 +912,20 @@ app.post('/Page3', async(req, res)=>{
         let acceptedComplaintIDs = plumberData.data().acceptedComplaints;
         let complaintStatusArray = [];
 
-        for (const ids of acceptedComplaintIDs.values()){
+        for (const ids of acceptedComplaintIDs.values()) {
             complaintRecord = await db.collection("Complaints").doc(ids).get();
             complaintStatusArray.push(complaintRecord.data().status);
-        } 
-
-        if (response1){
-            res.send({status: "ok", updatedStatus: newStatus, complaintStatusArray: complaintStatusArray});
-        }
-        else{
-            res.send({status: "error"});
         }
 
-    }catch(error){
-        res.send({status: error});
+        if (response1) {
+            res.send({ status: "ok", updatedStatus: newStatus, complaintStatusArray: complaintStatusArray });
+        }
+        else {
+            res.send({ status: "error" });
+        }
+
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -784,12 +934,12 @@ app.post('/Page3', async(req, res)=>{
 
 
 
-app.post('/Page5', async(req, res)=>{
+app.post('/Page5', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
 
         const complaintID = req.body.complaintID;
         const currentStatus = req.body.currentStatus;
@@ -798,7 +948,7 @@ app.post('/Page5', async(req, res)=>{
         const purchaseType = req.body.purchaseType;
         const purchaseDetails = req.body.purchaseDetails;
         const billAmount = req.body.billAmount;
-        
+
         console.log("I am here");
 
         const complaintData = await db.collection("Complaints").doc(complaintID).get();
@@ -806,10 +956,10 @@ app.post('/Page5', async(req, res)=>{
         const currentBillAmount = complaintData.data().billAmount;
 
         // Retrieve previous purchases type and add a new purchase type
-        var purchaseTypeHistory = complaintData.data().purchaseTypeHistory;  
+        var purchaseTypeHistory = complaintData.data().purchaseTypeHistory;
         purchaseTypeHistory.push(purchaseType);
 
-        var purchaseDetailsHistory = complaintData.data().purchaseDetailsHistory;  
+        var purchaseDetailsHistory = complaintData.data().purchaseDetailsHistory;
         purchaseDetailsHistory.push(purchaseDetails);
 
         var purchaseCostHistory = complaintData.data().purchaseCostHistory;
@@ -820,53 +970,53 @@ app.post('/Page5', async(req, res)=>{
         let newStatus = "tobeExecuted";
 
         let response1 = await db.collection("Complaints").doc(complaintID).set({
-            purchaseTypeHistory: purchaseTypeHistory, 
+            purchaseTypeHistory: purchaseTypeHistory,
             purchaseDetailsHistory: purchaseDetailsHistory,
             purchaseCostHistory: purchaseCostHistory,
             billAmount: updatedBillAmount,
             status: newStatus
-        }, {merge: true});
+        }, { merge: true });
 
-        
+
         let complaintRecord;
         const plumberData = await db.collection("RegisteredPlumber").doc(plumberUsername).get();
         let acceptedComplaintIDs = plumberData.data().acceptedComplaints;
         let complaintStatusArray = [];
 
-        for (const ids of acceptedComplaintIDs.values()){
+        for (const ids of acceptedComplaintIDs.values()) {
             complaintRecord = await db.collection("Complaints").doc(ids).get();
             complaintStatusArray.push(complaintRecord.data().status);
-        } 
-
-        if (response1){
-            res.send({status: "ok", updatedStatus: newStatus, complaintStatusArray: complaintStatusArray});
-        }
-        else{
-            res.send({status: "error"});
         }
 
-    }catch(error){
-        res.send({status: error});
+        if (response1) {
+            res.send({ status: "ok", updatedStatus: newStatus, complaintStatusArray: complaintStatusArray });
+        }
+        else {
+            res.send({ status: "error" });
+        }
+
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
 
 
-app.post('/AbandonComplaint', async(req, res)=>{
+app.post('/AbandonComplaint', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
         const complaintID = req.body.complaintID;
         const response = await db.collection("Complaints").doc(complaintID).set({
             status: "cancelled"
-        }, {merge: true});
+        }, { merge: true });
         // const jobCardDetails = complaintData.data();
 
-        res.send({status: "ok"});
-    }catch(error){
-        res.send({status: error});
+        res.send({ status: "ok" });
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -876,103 +1026,103 @@ app.post('/AbandonComplaint', async(req, res)=>{
 
 // ################################################################## MANAGER ##############################################################################
 
-app.post('/AssignComplaints', async(req, res)=>{
+app.post('/AssignComplaints', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
-        
+    try {
+
         const plumbers = await db.collection("RegisteredPlumber").get();
         const plumbersIDArray = [];
         const plumbersDataArray = [];
-        
+
         plumbers.forEach(doc => {
             plumbersIDArray.push(doc.id);
             plumbersDataArray.push(doc.data());
         });
-        
-        res.send({status: "ok", plumbersIDArray: plumbersIDArray, plumbersDataArray: plumbersDataArray});
 
-  
-    }catch(error){
-        res.send({status: error});
+        res.send({ status: "ok", plumbersIDArray: plumbersIDArray, plumbersDataArray: plumbersDataArray });
+
+
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
 
 
-app.post('/ManagerCheckComplaints', async(req, res)=>{
+app.post('/ManagerCheckComplaints', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
-        
+    try {
+
         const complaints = await db.collection("Complaints").get();
         const complaintsIDArray = [];
         const complaintsDataArray = [];
-        
+
         complaints.forEach(doc => {
             complaintsIDArray.push(doc.id);
             complaintsDataArray.push(doc.data());
         });
-        
-        res.send({status: "ok", complaintsIDArray: complaintsIDArray, complaintsDataArray: complaintsDataArray});
-  
-    }catch(error){
-        res.send({status: error});
+
+        res.send({ status: "ok", complaintsIDArray: complaintsIDArray, complaintsDataArray: complaintsDataArray });
+
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
 
-app.post('/AssignComplaintToPlumber', async(req, res)=>{
+app.post('/AssignComplaintToPlumber', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
-        
+    try {
+
         const plumberUsername = req.body.plumberUsername;
         const complaintID = req.body.complaintID;
         var response = 1;
         var response2 = 1;
 
         const complaintDoc = db.collection("Complaints").doc(complaintID);
-        if (!complaintDoc){
+        if (!complaintDoc) {
             alert("Invalid Complaint ID");
         }
-        else{
+        else {
             const complaintData = await complaintDoc.get();
-            
-            if (complaintData.data().status !== "raised"){
+
+            if (complaintData.data().status !== "raised") {
                 alert("Complaint already assigned!");
-            } 
-            else{
+            }
+            else {
 
                 response2 = await db.collection("Complaints").doc(complaintID).set({
                     status: "assigned"
-                }, {merge: true});
+                }, { merge: true });
 
                 const plumberData = await db.collection("RegisteredPlumber").doc(plumberUsername).get();
                 var plumberComplaints = plumberData.data().complaints;
                 plumberComplaints.push(complaintID);
-                
+
                 // Update the document
                 response = await db.collection("RegisteredPlumber").doc(plumberUsername).set({
                     complaints: plumberComplaints
-                }, {merge: true});
+                }, { merge: true });
             }
         }
-        if (response && response2){
-            res.send({status: "ok"});
+        if (response && response2) {
+            res.send({ status: "ok" });
         }
-        else{
-            res.send({status: "error"});
+        else {
+            res.send({ status: "error" });
         }
-  
-    }catch(error){
-        res.send({status: error});
+
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -980,17 +1130,17 @@ app.post('/AssignComplaintToPlumber', async(req, res)=>{
 
 
 // Assign complaint to plumbers automatically
-app.post('/AutoAssignComplaints', async(req, res)=>{
+app.post('/AutoAssignComplaints', async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Allow-Credentials", true);
-    try{
+    try {
 
         // Check for all the customers' complaint in raised condition
         const complaints = await db.collection("Complaints").get();
         const complaintsID = [];
-        
+
         complaints.forEach(doc => {
             complaintsID.push(doc.id);
         });
@@ -1000,11 +1150,11 @@ app.post('/AutoAssignComplaints', async(req, res)=>{
         const plumbers = await db.collection("RegisteredPlumber").get();
         const plumberUsernames = [];
         // const complaintsDataArray = [];
-        
+
         plumbers.forEach(doc => {
             plumberUsernames.push(doc.id);
         });
-    
+
 
         let n = plumberUsernames.length;
         let k = complaintsID.length;
@@ -1014,21 +1164,21 @@ app.post('/AutoAssignComplaints', async(req, res)=>{
         let cost = [];
         let temp = [];
         let temp2 = [];
-    
+
 
         // from each plumber add a forward edge to every customers
-        for (var i=0; i<n ;i++){
-            
+        for (var i = 0; i < n; i++) {
+
             temp = [];
             temp2 = [];
 
-            for (var j=0; j<n ;j++){
+            for (var j = 0; j < n; j++) {
                 temp.push(0);
                 temp2.push(0);
             }
-            for (var j=n; j<n+k ;j++){
+            for (var j = n; j < n + k; j++) {
                 temp.push(1);
-                temp2.push(2); 
+                temp2.push(1);
             }
             // to source node
             temp.push(0);
@@ -1044,10 +1194,10 @@ app.post('/AutoAssignComplaints', async(req, res)=>{
 
         // from each customer add a forward edge to the sink
         // each customer request can be served by at max 1 plumbers
-        for (var i=n; i<n+k; i++){
+        for (var i = n; i < n + k; i++) {
             temp = []
             temp2 = []
-            for (var j=0; j<n+k;j++){
+            for (var j = 0; j < n + k; j++) {
                 temp.push(0);
                 temp2.push(0);
             }
@@ -1056,8 +1206,9 @@ app.post('/AutoAssignComplaints', async(req, res)=>{
             temp2.push(0);
 
             // to sink
+            // We are restricting each complaint to be assigned to only one plumber
             temp.push(1);
-            temp2.push(2);
+            temp2.push(1);
 
             cap.push(temp);
             cost.push(temp2);
@@ -1068,11 +1219,12 @@ app.post('/AutoAssignComplaints', async(req, res)=>{
         // each plumber can serve at max 3 customers
         temp = [];
         temp2 = [];
-        for (var i=0; i<n ;i++){
-            temp.push(1);
-            temp2.push(4);
+        for (var i = 0; i < n; i++) {
+            // We are allowing every plumber to take 3 complaints
+            temp.push(3);
+            temp2.push(2);
         }
-        for (var i=n; i<n+k; i++){
+        for (var i = n; i < n + k; i++) {
             temp.push(0);
             temp2.push(0);
         }
@@ -1082,14 +1234,14 @@ app.post('/AutoAssignComplaints', async(req, res)=>{
         temp.push(0);
         temp2.push(0);
         temp2.push(0);
-        
+
         cap.push(temp);
         cost.push(temp2);
 
         // no outgoing edges from sink node
         temp = []
         temp2 = []
-        for (var i=0; i<n+k+2 ;i++){
+        for (var i = 0; i < n + k + 2; i++) {
             temp.push(0);
             temp2.push(0);
         }
@@ -1101,229 +1253,222 @@ app.post('/AutoAssignComplaints', async(req, res)=>{
         // console.log("Cost: ", cost)
         // Weights
 
-        
+
 
         // We need to call algo here      
         // algo will return assignment of plumbers to customers
-        function MinCostMaxFlow(cap, cost, s, t){
+        function MinCostMaxFlow(cap, cost, s, t) {
 
             let maxsize = Number.MAX_VALUE
-        
+
             // Stores the found edges
             let found = []
-        
+
             // Stores the number of nodes
             let N = 0
-        
+
             // Stores the capacity
             // of each edge
-        
+
             let flow = []
-        
+
             // Stores the cost per
             // unit flow of each edge
-        
+
             // Stores the distance from each node
             // and picked edges for each node
             let dad = []
             let dist = []
             let pi = []
             let assignment = [];
-        
+
             let INF = Math.floor(maxsize / 2) - 1
-        
+
             // Function to check if it is possible to
             // have a flow from the src to sink
-            function search(src, sink)
-            {
-        
+            function search(src, sink) {
+
                 // Initialise found[] to false
                 let found = new Array(N).fill(false)
-        
+
                 // Initialise the dist[] to INF
                 let dist = new Array(N + 1).fill(INF)
-        
+
                 // Distance from the source node
                 dist[src] = 0
-        
+
                 // Iterate until src reaches N
-                while (src != N)
-                {
+                while (src != N) {
                     let best = N
                     found[src] = true
-                    
-                    for (var k = 0; k < N; k++)
-                    {
-        
+
+                    for (var k = 0; k < N; k++) {
+
                         // If already found
                         if (found[k])
                             continue
-        
+
                         // Evaluate while flow
                         // is still in supply
-                        if (flow[k][src] != 0)
-                        {
+                        if (flow[k][src] != 0) {
                             // Obtain the total value
-                        let val = (dist[src] + pi[src] -
-                                    pi[k] - cost[k][src])
-        
-                            // If dist[k] is > minimum value
-                            if (dist[k] > val)
-                            {
-                                // Update
-                                dist[k] = val
-                                dad[k] = src
-                            }
-                        }
-        
-                        if (flow[src][k] < cap[src][k])
-                        {
                             let val = (dist[src] + pi[src] -
-                                    pi[k] + cost[src][k])
-        
+                                pi[k] - cost[k][src])
+
                             // If dist[k] is > minimum value
-                            if (dist[k] > val)
-                            {
+                            if (dist[k] > val) {
                                 // Update
                                 dist[k] = val
                                 dad[k] = src
                             }
                         }
-        
+
+                        if (flow[src][k] < cap[src][k]) {
+                            let val = (dist[src] + pi[src] -
+                                pi[k] + cost[src][k])
+
+                            // If dist[k] is > minimum value
+                            if (dist[k] > val) {
+                                // Update
+                                dist[k] = val
+                                dad[k] = src
+                            }
+                        }
+
                         if (dist[k] < dist[best])
                             best = k
                     }
-        
+
                     // Update src to best for
                     // next iteration
                     src = best
                 }
-        
+
                 for (var k = 0; k < N; k++)
                     pi[k] = Math.min(pi[k] + dist[k], INF)
-        
+
                 // Return the value obtained at sink
                 return found[sink]
             }
-        
+
             // Function to obtain the maximum Flow
-            function getMaxFlow(capi, costi,  src, sink)
-            {
-        
+            function getMaxFlow(capi, costi, src, sink) {
+
                 cap = capi
                 cost = costi
-        
+
                 N = (capi).length
-                found =  new Array(N).fill(false); 
-                    
+                found = new Array(N).fill(false);
+
                 flow = new Array(N);
                 for (var i = 0; i < N; i++)
                     flow[i] = new Array(N).fill(0)
-                
+
                 dist = new Array(N + 1).fill(INF)
-                
+
                 dad = new Array(N).fill(0)
                 pi = new Array(N).fill(0)
-                
+
                 totflow = 0
                 totcost = 0
-        
-        
-        
+
+
+
                 // If a path exist from src to sink
-                while (search(src, sink))
-                {
+                while (search(src, sink)) {
                     let paths = [sink];
                     // Set the default amount
                     amt = INF
                     x = sink
-                    
-                    while (x != src)
-                    {
+
+                    while (x != src) {
                         amt = Math.min(
                             amt,
-                            (flow[x][dad[x]] != 0)?flow[x][dad[x]]:
-                            cap[dad[x]][x] - flow[dad[x]][x])
+                            (flow[x][dad[x]] != 0) ? flow[x][dad[x]] :
+                                cap[dad[x]][x] - flow[dad[x]][x])
                         x = dad[x]
                     }
-        
+
                     x = sink
-                    
-                    while (x != src)
-                    {
+
+                    while (x != src) {
                         // if dad[x] == 0, then add the existing array into a bigger array
                         paths.push(dad[x]);
-        
-                        if (flow[x][dad[x]] != 0)
-                        {
+
+                        if (flow[x][dad[x]] != 0) {
                             flow[x][dad[x]] -= amt
                             totcost -= amt * cost[x][dad[x]]
                         }
-                        else
-                        {
+                        else {
                             flow[dad[x]][x] += amt
                             totcost += amt * cost[dad[x]][x]
                         }
                         x = dad[x]
                     }
-        
+
                     totflow += amt
-        
+
                     assignment.push(paths);
                 }
                 // Return pair total cost and sink
                 return assignment;
             }
-        
-        
+
+
             return getMaxFlow(cap, cost, s, t);
-            
+
             // Possible assignments 
             // console.log(assignment);
         }
-        
 
-        let assignment = MinCostMaxFlow(cap, cost, n+k, n+k+1);
+        console.log("Cap: ", cap);
+        console.log("Cost: ", cost);
+
+
+        let assignment = MinCostMaxFlow(cap, cost, n + k, n + k + 1);
+
 
         let plumberCustomer = []
-        for (var i=0; i<assignment.length ;i++){
+        for (var i = 0; i < assignment.length; i++) {
             plumberCustomer.push([complaintsID[(assignment[i])[1] - n], plumberUsernames[(assignment[i])[2]]]);
             // plumberCustomer.push([(assignment[i])[1], (assignment[i])[2]]);
         }
 
         // plumberCustomer = [ [complantID, plumberUsername], [complaintID, plumberUsername] ] 
         console.log(plumberCustomer);
-        
 
-        for (var i=0; i<plumberCustomer.length ;i++){
-            let plumberUsername = (plumberCustomer[i])[1];
-            let complaintID = (plumberCustomer[i])[0];
+        for (var i = 0; i < plumberCustomer.length ; i++) {
+
+            console.log(i);
+
+            var plumberUsername = (plumberCustomer[i])[1];
+            var complaintID = (plumberCustomer[i])[0];
             // var response = 1;
+            var complaintDoc = db.collection("Complaints").doc(complaintID);
 
-            let complaintDoc = db.collection("Complaints").doc(complaintID);
-            if (!complaintDoc){
-                alert("Invalid Complaint ID");
+            if (!complaintDoc) {
+                console.log("Invalid Complaint ID");
             }
-            else{
-                let complaintData = await complaintDoc.get();
-                
-                if (complaintData.data().status !== "raised"){
-                    alert("Complaint already assigned!");
-                } 
-                else{
-                    response2 = await db.collection("Complaints").doc(complaintID).set({
-                        status: "assigned",
-                        complaints: plumberComplaints
-                    }, {merge: true});
+            else {
+                var complaintData = await complaintDoc.get();
 
-                    let plumberData = await db.collection("RegisteredPlumber").doc(plumberUsername).get();
+                if (complaintData.data().status !== "raised" && complaintData.data().status !== "assigned") {
+                    console.log("Complaint already assigned!");
+                }
+                else {
+                    var response2 = await db.collection("Complaints").doc(complaintID).set({
+                        status: "assigned"
+                    }, { merge: true });
+                    
+                    var plumberData = await db.collection("RegisteredPlumber").doc(plumberUsername).get();
                     var plumberComplaints = plumberData.data().complaints;
                     plumberComplaints.push(complaintID);
-                    
+                    // console.log(plumberComplaints);
+
                     // Update the document
-                    response = await db.collection("RegisteredPlumber").doc(plumberUsername).set({
+                    var response = await db.collection("RegisteredPlumber").doc(plumberUsername).set({
                         complaints: plumberComplaints
-                    }, {merge: true});
+                    }, { merge: true });
                 }
             }
         }
@@ -1333,8 +1478,8 @@ app.post('/AutoAssignComplaints', async(req, res)=>{
         // Once, a plumber accepts a complaint... We will remove that complaint from other plumbers... And show the assigned Plumber to customer
 
 
-    }catch(error){
-        res.send({status: error});
+    } catch (error) {
+        res.send({ status: error });
         return;
     }
 })
@@ -1344,6 +1489,6 @@ app.post('/AutoAssignComplaints', async(req, res)=>{
 
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT,() => {
+app.listen(PORT, () => {
     console.log(`server is running on port ${PORT}.`);
 })
